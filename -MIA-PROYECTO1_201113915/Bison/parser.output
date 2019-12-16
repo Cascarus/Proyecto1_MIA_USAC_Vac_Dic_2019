@@ -1,0 +1,4223 @@
+Gramática
+
+    0 $accept: Start $end
+
+    1 Start: NT_Instructions
+
+    2 NT_Instructions: NT_Instructions NT_Instruction
+    3                | NT_Instruction
+
+    4 NT_Instruction: NT_Cat
+    5               | NT_Chgrp
+    6               | NT_Chmod
+    7               | NT_Chown
+    8               | NT_Cp
+    9               | NT_Edit
+   10               | NT_Exec
+   11               | NT_Fdisk
+   12               | NT_Find
+   13               | NT_Login
+   14               | NT_Logout
+   15               | NT_Loss
+   16               | NT_Mkdir
+   17               | NT_Mkdisk
+   18               | NT_Mkfile
+   19               | NT_Mkfs
+   20               | NT_Mkgrp
+   21               | NT_Mkusr
+   22               | NT_Mount
+   23               | NT_Mv
+   24               | NT_Pause
+   25               | NT_Recovery
+   26               | NT_Rm
+   27               | NT_Ren
+   28               | NT_Rep
+   29               | NT_Rmdisk
+   30               | NT_Rmgrp
+   31               | NT_Rmusr
+   32               | NT_Unmount
+
+   33 NT_Cat: RW_Cat NT_Parameterscat
+
+   34 NT_Parameterscat: NT_Parameterscat SYM_Ampersand NT_Parametercat
+   35                 | SYM_Ampersand NT_Parametercat
+
+   36 NT_Parametercat: RW_Id SYM_Arrow RE_Id
+   37                | RW_Filen SYM_Arrow RE_String
+   38                | RW_Filen SYM_Arrow RE_Path
+
+   39 NT_Chgrp: RW_Chgrp NT_Parameterschgrp
+
+   40 NT_Parameterschgrp: NT_Parameterschgrp SYM_Ampersand NT_Parameterchgrp
+   41                   | SYM_Ampersand NT_Parameterchgrp
+
+   42 NT_Parameterchgrp: RW_Usr SYM_Arrow RE_Id
+   43                  | RW_Usr SYM_Arrow RE_String
+   44                  | RW_Grp SYM_Arrow RE_Id
+   45                  | RW_Grp SYM_Arrow RE_String
+
+   46 NT_Chmod: RW_Chmod NT_Parameterschmod
+
+   47 NT_Parameterschmod: NT_Parameterschmod SYM_Ampersand NT_Parameterchmod
+   48                   | SYM_Ampersand NT_Parameterchmod
+
+   49 NT_Parameterchmod: RW_Path SYM_Arrow RE_Path
+   50                  | RW_Path SYM_Arrow RE_String
+   51                  | RW_Id SYM_Arrow RE_Id
+   52                  | RW_Ugo SYM_Arrow RE_Number
+   53                  | RW_R
+
+   54 NT_Chown: RW_Chown NT_Parameterschown
+
+   55 NT_Parameterschown: NT_Parameterschown SYM_Ampersand NT_Parameterchown
+   56                   | SYM_Ampersand NT_Parameterchown
+
+   57 NT_Parameterchown: RW_Path SYM_Arrow RE_Path
+   58                  | RW_Path SYM_Arrow RE_String
+   59                  | RW_Id SYM_Arrow RE_Id
+   60                  | RW_R
+   61                  | RW_Usr SYM_Arrow RE_Id
+   62                  | RW_Usr SYM_Arrow RE_String
+
+   63 NT_Cp: RW_Cp NT_Parameterscp
+
+   64 NT_Parameterscp: NT_Parameterscp SYM_Ampersand NT_Parametercp
+   65                | SYM_Ampersand NT_Parametercp
+
+   66 NT_Parametercp: RW_Path SYM_Arrow RE_Path
+   67               | RW_Path SYM_Arrow RE_String
+   68               | RW_Id SYM_Arrow RE_Id
+   69               | RW_Destiny SYM_Arrow RE_Path
+   70               | RW_Destiny SYM_Arrow RE_String
+
+   71 NT_Edit: RW_Edit NT_Parametersedit
+
+   72 NT_Parametersedit: NT_Parametersedit SYM_Ampersand NT_Parameteredit
+   73                  | SYM_Ampersand NT_Parameteredit
+
+   74 NT_Parameteredit: RW_Path SYM_Arrow RE_Path
+   75                 | RW_Path SYM_Arrow RE_String
+   76                 | RW_Id SYM_Arrow RE_Id
+   77                 | RW_Size SYM_Arrow RE_Number
+   78                 | RW_Cont SYM_Arrow RE_String
+
+   79 NT_Exec: RW_Exec SYM_Ampersand RW_Path SYM_Arrow RE_Path
+   80        | RW_Exec SYM_Ampersand RW_Path SYM_Arrow RE_String
+
+   81 NT_Fdisk: RW_Fdisk NT_Parametersfdisk
+
+   82 NT_Parametersfdisk: NT_Parametersfdisk SYM_Ampersand NT_Parameterfdisk
+   83                   | SYM_Ampersand NT_Parameterfdisk
+
+   84 NT_Parameterfdisk: RW_Size SYM_Arrow RE_Number
+   85                  | RW_Unit SYM_Arrow RE_Unit
+   86                  | RW_Path SYM_Arrow RE_Path
+   87                  | RW_Path SYM_Arrow RE_String
+   88                  | RW_Type SYM_Arrow RE_Type
+   89                  | RW_Type SYM_Arrow RW_P
+   90                  | RW_Fit SYM_Arrow RE_Fit
+   91                  | RW_Delete SYM_Arrow RE_Delete
+   92                  | RW_Name SYM_Arrow RE_String
+   93                  | RW_Name SYM_Arrow RE_Id
+   94                  | RW_Add SYM_Arrow RE_Number
+   95                  | RW_Add SYM_Arrow SYM_Hyphen RE_Number
+
+   96 NT_Find: RW_Find NT_Parametersfind
+
+   97 NT_Parametersfind: NT_Parametersfind SYM_Ampersand NT_Parameterfind
+   98                  | SYM_Ampersand NT_Parameterfind
+
+   99 NT_Parameterfind: RW_Path SYM_Arrow RE_Path
+  100                 | RW_Path SYM_Arrow RE_String
+  101                 | RW_Id SYM_Arrow RE_Id
+  102                 | RW_Name SYM_Arrow RE_Name2
+  103                 | RW_Name SYM_Arrow RE_String
+
+  104 NT_Login: RW_Login NT_Parameterslogin
+
+  105 NT_Parameterslogin: NT_Parameterslogin SYM_Ampersand NT_Parameterlogin
+  106                   | SYM_Ampersand NT_Parameterlogin
+
+  107 NT_Parameterlogin: RW_Usr SYM_Arrow RE_Id
+  108                  | RW_Usr SYM_Arrow RE_String
+  109                  | RW_Pwd SYM_Arrow RE_Id
+  110                  | RW_Pwd SYM_Arrow RE_String
+  111                  | RW_Pwd SYM_Arrow RE_Number
+  112                  | RW_Id SYM_Arrow RE_Id
+
+  113 NT_Logout: RW_Logout
+
+  114 NT_Loss: RW_Loss SYM_Ampersand RW_Id SYM_Arrow RE_Id
+
+  115 NT_Mkdir: RW_Mkdir NT_Parametersmkdir
+
+  116 NT_Parametersmkdir: NT_Parametersmkdir SYM_Ampersand NT_Parametermkdir
+  117                   | SYM_Ampersand NT_Parametermkdir
+
+  118 NT_Parametermkdir: RW_Path SYM_Arrow RE_Path
+  119                  | RW_Path SYM_Arrow RE_String
+  120                  | RW_Id SYM_Arrow RE_Id
+  121                  | RW_P
+
+  122 NT_Mkdisk: RW_Mkdisk NT_Parametersmkdisk
+
+  123 NT_Parametersmkdisk: NT_Parametersmkdisk SYM_Ampersand NT_Parametermkdisk
+  124                    | SYM_Ampersand NT_Parametermkdisk
+
+  125 NT_Parametermkdisk: RW_Size SYM_Arrow RE_Number
+  126                   | RW_Unit SYM_Arrow RE_Unit
+  127                   | RW_Path SYM_Arrow RE_String
+  128                   | RW_Path SYM_Arrow RE_Path
+  129                   | RW_Name SYM_Arrow RE_Name2
+
+  130 NT_Mkfile: RW_Mkfile NT_Parametersmkfile
+
+  131 NT_Parametersmkfile: NT_Parametersmkfile SYM_Ampersand NT_Parametermkfile
+  132                    | SYM_Ampersand NT_Parametermkfile
+
+  133 NT_Parametermkfile: RW_Path SYM_Arrow RE_Path
+  134                   | RW_Path SYM_Arrow RE_String
+  135                   | RW_Id SYM_Arrow RE_Id
+  136                   | RW_P
+  137                   | RW_Size SYM_Arrow RE_Number
+  138                   | RW_Cont SYM_Arrow RE_String
+
+  139 NT_Mkfs: RW_Mkfs NT_Parametersmkfs
+
+  140 NT_Parametersmkfs: NT_Parametersmkfs SYM_Ampersand NT_Parametermkfs
+  141                  | SYM_Ampersand NT_Parametermkfs
+
+  142 NT_Parametermkfs: RW_Id SYM_Arrow RE_Id
+  143                 | RW_Type SYM_Arrow RE_Delete
+
+  144 NT_Mkgrp: RW_Mkgrp NT_Parametersmkgrp
+
+  145 NT_Parametersmkgrp: NT_Parametersmkgrp SYM_Ampersand NT_Parametermkgrp
+  146                   | SYM_Ampersand NT_Parametermkgrp
+
+  147 NT_Parametermkgrp: RW_Id SYM_Arrow RE_Id
+  148                  | RW_Name SYM_Arrow RE_Id
+  149                  | RW_Name SYM_Arrow RE_String
+
+  150 NT_Mkusr: RW_Mkusr NT_Parametersmkusr
+
+  151 NT_Parametersmkusr: NT_Parametersmkusr SYM_Ampersand NT_Parametermkusr
+  152                   | SYM_Ampersand NT_Parametermkusr
+
+  153 NT_Parametermkusr: RW_Usr SYM_Arrow RE_Id
+  154                  | RW_Usr SYM_Arrow RE_String
+  155                  | RW_Id SYM_Arrow RE_Id
+  156                  | RW_Pwd SYM_Arrow RE_Id
+  157                  | RW_Pwd SYM_Arrow RE_String
+  158                  | RW_Pwd SYM_Arrow RE_Number
+  159                  | RW_Grp SYM_Arrow RE_Id
+  160                  | RW_Grp SYM_Arrow RE_String
+
+  161 NT_Mount: RW_Mount NT_Parametersmount
+
+  162 NT_Parametersmount: NT_Parametersmount SYM_Ampersand NT_Parametermount
+  163                   | SYM_Ampersand NT_Parametermount
+
+  164 NT_Parametermount: RW_Path SYM_Arrow RE_Path
+  165                  | RW_Path SYM_Arrow RE_String
+  166                  | RW_Name SYM_Arrow RE_String
+  167                  | RW_Name SYM_Arrow RE_Id
+
+  168 NT_Mv: RW_Mv NT_Parametersmv
+
+  169 NT_Parametersmv: NT_Parametersmv SYM_Ampersand NT_Parametermv
+  170                | SYM_Ampersand NT_Parametermv
+
+  171 NT_Parametermv: RW_Path SYM_Arrow RE_Path
+  172               | RW_Path SYM_Arrow RE_String
+  173               | RW_Destiny SYM_Arrow RE_Path
+  174               | RW_Destiny SYM_Arrow RE_String
+  175               | RW_Id SYM_Arrow RE_Id
+
+  176 NT_Pause: RW_Pause
+
+  177 NT_Recovery: RW_Recovery SYM_Ampersand RW_Id SYM_Arrow RE_Id
+
+  178 NT_Ren: RW_Ren NT_Parametersren
+
+  179 NT_Parametersren: NT_Parametersren SYM_Ampersand NT_Parameterren
+  180                 | SYM_Ampersand NT_Parameterren
+
+  181 NT_Parameterren: RW_Path SYM_Arrow RE_Path
+  182                | RW_Path SYM_Arrow RE_String
+  183                | RW_Id SYM_Arrow RE_Id
+  184                | RW_Name SYM_Arrow RE_Name2
+  185                | RW_Name SYM_Arrow RE_String
+
+  186 NT_Rep: RW_Rep NT_Parametersrep
+
+  187 NT_Parametersrep: NT_Parametersrep SYM_Ampersand NT_Parameterrep
+  188                 | SYM_Ampersand NT_Parameterrep
+
+  189 NT_Parameterrep: RW_Name SYM_Arrow RE_Name
+  190                | RW_Name SYM_Arrow RW_File
+  191                | RW_Path SYM_Arrow RE_Path
+  192                | RW_Path SYM_Arrow RE_String
+  193                | RW_Id SYM_Arrow RE_Id
+  194                | RW_Ruta SYM_Arrow RE_Path
+  195                | RW_Ruta SYM_Arrow RE_String
+
+  196 NT_Rm: RW_Rm NT_Parametersrm
+
+  197 NT_Parametersrm: NT_Parametersrm SYM_Ampersand NT_Parameterrm
+  198                | SYM_Ampersand NT_Parameterrm
+
+  199 NT_Parameterrm: RW_Path SYM_Arrow RE_Path
+  200               | RW_Path SYM_Arrow RE_String
+  201               | RW_Id SYM_Arrow RE_Id
+  202               | RW_Rf
+
+  203 NT_Rmdisk: RW_Rmdisk SYM_Ampersand RW_Path SYM_Arrow RE_String
+  204          | RW_Rmdisk SYM_Ampersand RW_Path SYM_Arrow RE_Path
+
+  205 NT_Rmgrp: RW_Rmgrp NT_Parametersrmgrp
+
+  206 NT_Parametersrmgrp: NT_Parametersrmgrp SYM_Ampersand NT_Parameterrmgrp
+  207                   | SYM_Ampersand NT_Parameterrmgrp
+
+  208 NT_Parameterrmgrp: RW_Name SYM_Arrow RE_Id
+  209                  | RW_Name SYM_Arrow RE_String
+  210                  | RW_Id SYM_Arrow RE_Id
+
+  211 NT_Rmusr: RW_Rmusr NT_Parametersrmusr
+
+  212 NT_Parametersrmusr: NT_Parametersrmusr SYM_Ampersand NT_Parameterrmusr
+  213                   | SYM_Ampersand NT_Parameterrmusr
+
+  214 NT_Parameterrmusr: RW_Usr SYM_Arrow RE_Id
+  215                  | RW_Usr SYM_Arrow RE_String
+  216                  | RW_Id SYM_Arrow RE_Id
+
+  217 NT_Unmount: RW_Unmount NT_Parametersunmount
+
+  218 NT_Parametersunmount: NT_Parametersunmount SYM_Ampersand NT_Parameterunmount
+  219                     | SYM_Ampersand NT_Parameterunmount
+
+  220 NT_Parameterunmount: RW_Idn SYM_Arrow RE_Id
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+error (256)
+RW_Add (258) 94 95
+RW_Cat (259) 33
+RW_Chgrp (260) 39
+RW_Chmod (261) 46
+RW_Chown (262) 54
+RW_Cont (263) 78 138
+RW_Cp (264) 63
+RW_Delete (265) 91
+RW_Destiny (266) 69 70 173 174
+RW_Edit (267) 71
+RW_Exec (268) 79 80
+RW_Fdisk (269) 81
+RW_File (270) 190
+RW_Filen (271) 37 38
+RW_Find (272) 96
+RW_Fit (273) 90
+RW_Grp (274) 44 45 159 160
+RW_Id (275) 36 51 59 68 76 101 112 114 120 135 142 147 155 175 177
+    183 193 201 210 216
+RW_Idn (276) 220
+RW_Login (277) 104
+RW_Logout (278) 113
+RW_Loss (279) 114
+RW_Mkdir (280) 115
+RW_Mkdisk (281) 122
+RW_Mkfile (282) 130
+RW_Mkfs (283) 139
+RW_Mkgrp (284) 144
+RW_Mkusr (285) 150
+RW_Mount (286) 161
+RW_Mv (287) 168
+RW_Name (288) 92 93 102 103 129 148 149 166 167 184 185 189 190 208
+    209
+RW_P (289) 89 121 136
+RW_Path (290) 49 50 57 58 66 67 74 75 79 80 86 87 99 100 118 119 127
+    128 133 134 164 165 171 172 181 182 191 192 199 200 203 204
+RW_Pause (291) 176
+RW_Pwd (292) 109 110 111 156 157 158
+RW_R (293) 53 60
+RW_Recovery (294) 177
+RW_Ren (295) 178
+RW_Rep (296) 186
+RW_Rf (297) 202
+RW_Rm (298) 196
+RW_Rmdisk (299) 203 204
+RW_Rmgrp (300) 205
+RW_Rmusr (301) 211
+RW_Ruta (302) 194 195
+RW_Size (303) 77 84 125 137
+RW_Type (304) 88 89 143
+RW_Ugo (305) 52
+RW_Unit (306) 85 126
+RW_Unmount (307) 217
+RW_Usr (308) 42 43 61 62 107 108 153 154 214 215
+SYM_Arrow (309) 36 37 38 42 43 44 45 49 50 51 52 57 58 59 61 62 66
+    67 68 69 70 74 75 76 77 78 79 80 84 85 86 87 88 89 90 91 92 93
+    94 95 99 100 101 102 103 107 108 109 110 111 112 114 118 119 120
+    125 126 127 128 129 133 134 135 137 138 142 143 147 148 149 153
+    154 155 156 157 158 159 160 164 165 166 167 171 172 173 174 175
+    177 181 182 183 184 185 189 190 191 192 193 194 195 199 200 201
+    203 204 208 209 210 214 215 216 220
+SYM_Ampersand (310) 34 35 40 41 47 48 55 56 64 65 72 73 79 80 82 83
+    97 98 105 106 114 116 117 123 124 131 132 140 141 145 146 151 152
+    162 163 169 170 177 179 180 187 188 197 198 203 204 206 207 212
+    213 218 219
+SYM_Hyphen (311) 95
+RE_Delete (312) 91 143
+RE_Fit (313) 90
+RE_Id (314) 36 42 44 51 59 61 68 76 93 101 107 109 112 114 120 135
+    142 147 148 153 155 156 159 167 175 177 183 193 201 208 210 214
+    216 220
+RE_Name (315) 189
+RE_Name2 (316) 102 129 184
+RE_Number (317) 52 77 84 94 95 111 125 137 158
+RE_Path (318) 38 49 57 66 69 74 79 86 99 118 128 133 164 171 173 181
+    191 194 199 204
+RE_String (319) 37 43 45 50 58 62 67 70 75 78 80 87 92 100 103 108
+    110 119 127 134 138 149 154 157 160 165 166 172 174 182 185 192
+    195 200 203 209 215
+RE_Type (320) 88
+RE_Unit (321) 85 126
+
+
+No terminales con las reglas donde aparecen
+
+$accept (67)
+    en la izquierda: 0
+Start (68)
+    en la izquierda: 1, en la derecha: 0
+NT_Instructions (69)
+    en la izquierda: 2 3, en la derecha: 1 2
+NT_Instruction (70)
+    en la izquierda: 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21
+    22 23 24 25 26 27 28 29 30 31 32, en la derecha: 2 3
+NT_Cat (71)
+    en la izquierda: 33, en la derecha: 4
+NT_Parameterscat (72)
+    en la izquierda: 34 35, en la derecha: 33 34
+NT_Parametercat (73)
+    en la izquierda: 36 37 38, en la derecha: 34 35
+NT_Chgrp (74)
+    en la izquierda: 39, en la derecha: 5
+NT_Parameterschgrp (75)
+    en la izquierda: 40 41, en la derecha: 39 40
+NT_Parameterchgrp (76)
+    en la izquierda: 42 43 44 45, en la derecha: 40 41
+NT_Chmod (77)
+    en la izquierda: 46, en la derecha: 6
+NT_Parameterschmod (78)
+    en la izquierda: 47 48, en la derecha: 46 47
+NT_Parameterchmod (79)
+    en la izquierda: 49 50 51 52 53, en la derecha: 47 48
+NT_Chown (80)
+    en la izquierda: 54, en la derecha: 7
+NT_Parameterschown (81)
+    en la izquierda: 55 56, en la derecha: 54 55
+NT_Parameterchown (82)
+    en la izquierda: 57 58 59 60 61 62, en la derecha: 55 56
+NT_Cp (83)
+    en la izquierda: 63, en la derecha: 8
+NT_Parameterscp (84)
+    en la izquierda: 64 65, en la derecha: 63 64
+NT_Parametercp (85)
+    en la izquierda: 66 67 68 69 70, en la derecha: 64 65
+NT_Edit (86)
+    en la izquierda: 71, en la derecha: 9
+NT_Parametersedit (87)
+    en la izquierda: 72 73, en la derecha: 71 72
+NT_Parameteredit (88)
+    en la izquierda: 74 75 76 77 78, en la derecha: 72 73
+NT_Exec (89)
+    en la izquierda: 79 80, en la derecha: 10
+NT_Fdisk (90)
+    en la izquierda: 81, en la derecha: 11
+NT_Parametersfdisk (91)
+    en la izquierda: 82 83, en la derecha: 81 82
+NT_Parameterfdisk (92)
+    en la izquierda: 84 85 86 87 88 89 90 91 92 93 94 95, en la derecha:
+    82 83
+NT_Find (93)
+    en la izquierda: 96, en la derecha: 12
+NT_Parametersfind (94)
+    en la izquierda: 97 98, en la derecha: 96 97
+NT_Parameterfind (95)
+    en la izquierda: 99 100 101 102 103, en la derecha: 97 98
+NT_Login (96)
+    en la izquierda: 104, en la derecha: 13
+NT_Parameterslogin (97)
+    en la izquierda: 105 106, en la derecha: 104 105
+NT_Parameterlogin (98)
+    en la izquierda: 107 108 109 110 111 112, en la derecha: 105 106
+NT_Logout (99)
+    en la izquierda: 113, en la derecha: 14
+NT_Loss (100)
+    en la izquierda: 114, en la derecha: 15
+NT_Mkdir (101)
+    en la izquierda: 115, en la derecha: 16
+NT_Parametersmkdir (102)
+    en la izquierda: 116 117, en la derecha: 115 116
+NT_Parametermkdir (103)
+    en la izquierda: 118 119 120 121, en la derecha: 116 117
+NT_Mkdisk (104)
+    en la izquierda: 122, en la derecha: 17
+NT_Parametersmkdisk (105)
+    en la izquierda: 123 124, en la derecha: 122 123
+NT_Parametermkdisk (106)
+    en la izquierda: 125 126 127 128 129, en la derecha: 123 124
+NT_Mkfile (107)
+    en la izquierda: 130, en la derecha: 18
+NT_Parametersmkfile (108)
+    en la izquierda: 131 132, en la derecha: 130 131
+NT_Parametermkfile (109)
+    en la izquierda: 133 134 135 136 137 138, en la derecha: 131 132
+NT_Mkfs (110)
+    en la izquierda: 139, en la derecha: 19
+NT_Parametersmkfs (111)
+    en la izquierda: 140 141, en la derecha: 139 140
+NT_Parametermkfs (112)
+    en la izquierda: 142 143, en la derecha: 140 141
+NT_Mkgrp (113)
+    en la izquierda: 144, en la derecha: 20
+NT_Parametersmkgrp (114)
+    en la izquierda: 145 146, en la derecha: 144 145
+NT_Parametermkgrp (115)
+    en la izquierda: 147 148 149, en la derecha: 145 146
+NT_Mkusr (116)
+    en la izquierda: 150, en la derecha: 21
+NT_Parametersmkusr (117)
+    en la izquierda: 151 152, en la derecha: 150 151
+NT_Parametermkusr (118)
+    en la izquierda: 153 154 155 156 157 158 159 160, en la derecha:
+    151 152
+NT_Mount (119)
+    en la izquierda: 161, en la derecha: 22
+NT_Parametersmount (120)
+    en la izquierda: 162 163, en la derecha: 161 162
+NT_Parametermount (121)
+    en la izquierda: 164 165 166 167, en la derecha: 162 163
+NT_Mv (122)
+    en la izquierda: 168, en la derecha: 23
+NT_Parametersmv (123)
+    en la izquierda: 169 170, en la derecha: 168 169
+NT_Parametermv (124)
+    en la izquierda: 171 172 173 174 175, en la derecha: 169 170
+NT_Pause (125)
+    en la izquierda: 176, en la derecha: 24
+NT_Recovery (126)
+    en la izquierda: 177, en la derecha: 25
+NT_Ren (127)
+    en la izquierda: 178, en la derecha: 27
+NT_Parametersren (128)
+    en la izquierda: 179 180, en la derecha: 178 179
+NT_Parameterren (129)
+    en la izquierda: 181 182 183 184 185, en la derecha: 179 180
+NT_Rep (130)
+    en la izquierda: 186, en la derecha: 28
+NT_Parametersrep (131)
+    en la izquierda: 187 188, en la derecha: 186 187
+NT_Parameterrep (132)
+    en la izquierda: 189 190 191 192 193 194 195, en la derecha: 187
+    188
+NT_Rm (133)
+    en la izquierda: 196, en la derecha: 26
+NT_Parametersrm (134)
+    en la izquierda: 197 198, en la derecha: 196 197
+NT_Parameterrm (135)
+    en la izquierda: 199 200 201 202, en la derecha: 197 198
+NT_Rmdisk (136)
+    en la izquierda: 203 204, en la derecha: 29
+NT_Rmgrp (137)
+    en la izquierda: 205, en la derecha: 30
+NT_Parametersrmgrp (138)
+    en la izquierda: 206 207, en la derecha: 205 206
+NT_Parameterrmgrp (139)
+    en la izquierda: 208 209 210, en la derecha: 206 207
+NT_Rmusr (140)
+    en la izquierda: 211, en la derecha: 31
+NT_Parametersrmusr (141)
+    en la izquierda: 212 213, en la derecha: 211 212
+NT_Parameterrmusr (142)
+    en la izquierda: 214 215 216, en la derecha: 212 213
+NT_Unmount (143)
+    en la izquierda: 217, en la derecha: 32
+NT_Parametersunmount (144)
+    en la izquierda: 218 219, en la derecha: 217 218
+NT_Parameterunmount (145)
+    en la izquierda: 220, en la derecha: 218 219
+
+
+Estado 0
+
+    0 $accept: . Start $end
+
+    RW_Cat       desplazar e ir al estado 1
+    RW_Chgrp     desplazar e ir al estado 2
+    RW_Chmod     desplazar e ir al estado 3
+    RW_Chown     desplazar e ir al estado 4
+    RW_Cp        desplazar e ir al estado 5
+    RW_Edit      desplazar e ir al estado 6
+    RW_Exec      desplazar e ir al estado 7
+    RW_Fdisk     desplazar e ir al estado 8
+    RW_Find      desplazar e ir al estado 9
+    RW_Login     desplazar e ir al estado 10
+    RW_Logout    desplazar e ir al estado 11
+    RW_Loss      desplazar e ir al estado 12
+    RW_Mkdir     desplazar e ir al estado 13
+    RW_Mkdisk    desplazar e ir al estado 14
+    RW_Mkfile    desplazar e ir al estado 15
+    RW_Mkfs      desplazar e ir al estado 16
+    RW_Mkgrp     desplazar e ir al estado 17
+    RW_Mkusr     desplazar e ir al estado 18
+    RW_Mount     desplazar e ir al estado 19
+    RW_Mv        desplazar e ir al estado 20
+    RW_Pause     desplazar e ir al estado 21
+    RW_Recovery  desplazar e ir al estado 22
+    RW_Ren       desplazar e ir al estado 23
+    RW_Rep       desplazar e ir al estado 24
+    RW_Rm        desplazar e ir al estado 25
+    RW_Rmdisk    desplazar e ir al estado 26
+    RW_Rmgrp     desplazar e ir al estado 27
+    RW_Rmusr     desplazar e ir al estado 28
+    RW_Unmount   desplazar e ir al estado 29
+
+    Start            ir al estado 30
+    NT_Instructions  ir al estado 31
+    NT_Instruction   ir al estado 32
+    NT_Cat           ir al estado 33
+    NT_Chgrp         ir al estado 34
+    NT_Chmod         ir al estado 35
+    NT_Chown         ir al estado 36
+    NT_Cp            ir al estado 37
+    NT_Edit          ir al estado 38
+    NT_Exec          ir al estado 39
+    NT_Fdisk         ir al estado 40
+    NT_Find          ir al estado 41
+    NT_Login         ir al estado 42
+    NT_Logout        ir al estado 43
+    NT_Loss          ir al estado 44
+    NT_Mkdir         ir al estado 45
+    NT_Mkdisk        ir al estado 46
+    NT_Mkfile        ir al estado 47
+    NT_Mkfs          ir al estado 48
+    NT_Mkgrp         ir al estado 49
+    NT_Mkusr         ir al estado 50
+    NT_Mount         ir al estado 51
+    NT_Mv            ir al estado 52
+    NT_Pause         ir al estado 53
+    NT_Recovery      ir al estado 54
+    NT_Ren           ir al estado 55
+    NT_Rep           ir al estado 56
+    NT_Rm            ir al estado 57
+    NT_Rmdisk        ir al estado 58
+    NT_Rmgrp         ir al estado 59
+    NT_Rmusr         ir al estado 60
+    NT_Unmount       ir al estado 61
+
+
+Estado 1
+
+   33 NT_Cat: RW_Cat . NT_Parameterscat
+
+    SYM_Ampersand  desplazar e ir al estado 62
+
+    NT_Parameterscat  ir al estado 63
+
+
+Estado 2
+
+   39 NT_Chgrp: RW_Chgrp . NT_Parameterschgrp
+
+    SYM_Ampersand  desplazar e ir al estado 64
+
+    NT_Parameterschgrp  ir al estado 65
+
+
+Estado 3
+
+   46 NT_Chmod: RW_Chmod . NT_Parameterschmod
+
+    SYM_Ampersand  desplazar e ir al estado 66
+
+    NT_Parameterschmod  ir al estado 67
+
+
+Estado 4
+
+   54 NT_Chown: RW_Chown . NT_Parameterschown
+
+    SYM_Ampersand  desplazar e ir al estado 68
+
+    NT_Parameterschown  ir al estado 69
+
+
+Estado 5
+
+   63 NT_Cp: RW_Cp . NT_Parameterscp
+
+    SYM_Ampersand  desplazar e ir al estado 70
+
+    NT_Parameterscp  ir al estado 71
+
+
+Estado 6
+
+   71 NT_Edit: RW_Edit . NT_Parametersedit
+
+    SYM_Ampersand  desplazar e ir al estado 72
+
+    NT_Parametersedit  ir al estado 73
+
+
+Estado 7
+
+   79 NT_Exec: RW_Exec . SYM_Ampersand RW_Path SYM_Arrow RE_Path
+   80        | RW_Exec . SYM_Ampersand RW_Path SYM_Arrow RE_String
+
+    SYM_Ampersand  desplazar e ir al estado 74
+
+
+Estado 8
+
+   81 NT_Fdisk: RW_Fdisk . NT_Parametersfdisk
+
+    SYM_Ampersand  desplazar e ir al estado 75
+
+    NT_Parametersfdisk  ir al estado 76
+
+
+Estado 9
+
+   96 NT_Find: RW_Find . NT_Parametersfind
+
+    SYM_Ampersand  desplazar e ir al estado 77
+
+    NT_Parametersfind  ir al estado 78
+
+
+Estado 10
+
+  104 NT_Login: RW_Login . NT_Parameterslogin
+
+    SYM_Ampersand  desplazar e ir al estado 79
+
+    NT_Parameterslogin  ir al estado 80
+
+
+Estado 11
+
+  113 NT_Logout: RW_Logout .
+
+    $default  reduce usando la regla 113 (NT_Logout)
+
+
+Estado 12
+
+  114 NT_Loss: RW_Loss . SYM_Ampersand RW_Id SYM_Arrow RE_Id
+
+    SYM_Ampersand  desplazar e ir al estado 81
+
+
+Estado 13
+
+  115 NT_Mkdir: RW_Mkdir . NT_Parametersmkdir
+
+    SYM_Ampersand  desplazar e ir al estado 82
+
+    NT_Parametersmkdir  ir al estado 83
+
+
+Estado 14
+
+  122 NT_Mkdisk: RW_Mkdisk . NT_Parametersmkdisk
+
+    SYM_Ampersand  desplazar e ir al estado 84
+
+    NT_Parametersmkdisk  ir al estado 85
+
+
+Estado 15
+
+  130 NT_Mkfile: RW_Mkfile . NT_Parametersmkfile
+
+    SYM_Ampersand  desplazar e ir al estado 86
+
+    NT_Parametersmkfile  ir al estado 87
+
+
+Estado 16
+
+  139 NT_Mkfs: RW_Mkfs . NT_Parametersmkfs
+
+    SYM_Ampersand  desplazar e ir al estado 88
+
+    NT_Parametersmkfs  ir al estado 89
+
+
+Estado 17
+
+  144 NT_Mkgrp: RW_Mkgrp . NT_Parametersmkgrp
+
+    SYM_Ampersand  desplazar e ir al estado 90
+
+    NT_Parametersmkgrp  ir al estado 91
+
+
+Estado 18
+
+  150 NT_Mkusr: RW_Mkusr . NT_Parametersmkusr
+
+    SYM_Ampersand  desplazar e ir al estado 92
+
+    NT_Parametersmkusr  ir al estado 93
+
+
+Estado 19
+
+  161 NT_Mount: RW_Mount . NT_Parametersmount
+
+    SYM_Ampersand  desplazar e ir al estado 94
+
+    NT_Parametersmount  ir al estado 95
+
+
+Estado 20
+
+  168 NT_Mv: RW_Mv . NT_Parametersmv
+
+    SYM_Ampersand  desplazar e ir al estado 96
+
+    NT_Parametersmv  ir al estado 97
+
+
+Estado 21
+
+  176 NT_Pause: RW_Pause .
+
+    $default  reduce usando la regla 176 (NT_Pause)
+
+
+Estado 22
+
+  177 NT_Recovery: RW_Recovery . SYM_Ampersand RW_Id SYM_Arrow RE_Id
+
+    SYM_Ampersand  desplazar e ir al estado 98
+
+
+Estado 23
+
+  178 NT_Ren: RW_Ren . NT_Parametersren
+
+    SYM_Ampersand  desplazar e ir al estado 99
+
+    NT_Parametersren  ir al estado 100
+
+
+Estado 24
+
+  186 NT_Rep: RW_Rep . NT_Parametersrep
+
+    SYM_Ampersand  desplazar e ir al estado 101
+
+    NT_Parametersrep  ir al estado 102
+
+
+Estado 25
+
+  196 NT_Rm: RW_Rm . NT_Parametersrm
+
+    SYM_Ampersand  desplazar e ir al estado 103
+
+    NT_Parametersrm  ir al estado 104
+
+
+Estado 26
+
+  203 NT_Rmdisk: RW_Rmdisk . SYM_Ampersand RW_Path SYM_Arrow RE_String
+  204          | RW_Rmdisk . SYM_Ampersand RW_Path SYM_Arrow RE_Path
+
+    SYM_Ampersand  desplazar e ir al estado 105
+
+
+Estado 27
+
+  205 NT_Rmgrp: RW_Rmgrp . NT_Parametersrmgrp
+
+    SYM_Ampersand  desplazar e ir al estado 106
+
+    NT_Parametersrmgrp  ir al estado 107
+
+
+Estado 28
+
+  211 NT_Rmusr: RW_Rmusr . NT_Parametersrmusr
+
+    SYM_Ampersand  desplazar e ir al estado 108
+
+    NT_Parametersrmusr  ir al estado 109
+
+
+Estado 29
+
+  217 NT_Unmount: RW_Unmount . NT_Parametersunmount
+
+    SYM_Ampersand  desplazar e ir al estado 110
+
+    NT_Parametersunmount  ir al estado 111
+
+
+Estado 30
+
+    0 $accept: Start . $end
+
+    $end  desplazar e ir al estado 112
+
+
+Estado 31
+
+    1 Start: NT_Instructions .
+    2 NT_Instructions: NT_Instructions . NT_Instruction
+
+    RW_Cat       desplazar e ir al estado 1
+    RW_Chgrp     desplazar e ir al estado 2
+    RW_Chmod     desplazar e ir al estado 3
+    RW_Chown     desplazar e ir al estado 4
+    RW_Cp        desplazar e ir al estado 5
+    RW_Edit      desplazar e ir al estado 6
+    RW_Exec      desplazar e ir al estado 7
+    RW_Fdisk     desplazar e ir al estado 8
+    RW_Find      desplazar e ir al estado 9
+    RW_Login     desplazar e ir al estado 10
+    RW_Logout    desplazar e ir al estado 11
+    RW_Loss      desplazar e ir al estado 12
+    RW_Mkdir     desplazar e ir al estado 13
+    RW_Mkdisk    desplazar e ir al estado 14
+    RW_Mkfile    desplazar e ir al estado 15
+    RW_Mkfs      desplazar e ir al estado 16
+    RW_Mkgrp     desplazar e ir al estado 17
+    RW_Mkusr     desplazar e ir al estado 18
+    RW_Mount     desplazar e ir al estado 19
+    RW_Mv        desplazar e ir al estado 20
+    RW_Pause     desplazar e ir al estado 21
+    RW_Recovery  desplazar e ir al estado 22
+    RW_Ren       desplazar e ir al estado 23
+    RW_Rep       desplazar e ir al estado 24
+    RW_Rm        desplazar e ir al estado 25
+    RW_Rmdisk    desplazar e ir al estado 26
+    RW_Rmgrp     desplazar e ir al estado 27
+    RW_Rmusr     desplazar e ir al estado 28
+    RW_Unmount   desplazar e ir al estado 29
+
+    $default  reduce usando la regla 1 (Start)
+
+    NT_Instruction  ir al estado 113
+    NT_Cat          ir al estado 33
+    NT_Chgrp        ir al estado 34
+    NT_Chmod        ir al estado 35
+    NT_Chown        ir al estado 36
+    NT_Cp           ir al estado 37
+    NT_Edit         ir al estado 38
+    NT_Exec         ir al estado 39
+    NT_Fdisk        ir al estado 40
+    NT_Find         ir al estado 41
+    NT_Login        ir al estado 42
+    NT_Logout       ir al estado 43
+    NT_Loss         ir al estado 44
+    NT_Mkdir        ir al estado 45
+    NT_Mkdisk       ir al estado 46
+    NT_Mkfile       ir al estado 47
+    NT_Mkfs         ir al estado 48
+    NT_Mkgrp        ir al estado 49
+    NT_Mkusr        ir al estado 50
+    NT_Mount        ir al estado 51
+    NT_Mv           ir al estado 52
+    NT_Pause        ir al estado 53
+    NT_Recovery     ir al estado 54
+    NT_Ren          ir al estado 55
+    NT_Rep          ir al estado 56
+    NT_Rm           ir al estado 57
+    NT_Rmdisk       ir al estado 58
+    NT_Rmgrp        ir al estado 59
+    NT_Rmusr        ir al estado 60
+    NT_Unmount      ir al estado 61
+
+
+Estado 32
+
+    3 NT_Instructions: NT_Instruction .
+
+    $default  reduce usando la regla 3 (NT_Instructions)
+
+
+Estado 33
+
+    4 NT_Instruction: NT_Cat .
+
+    $default  reduce usando la regla 4 (NT_Instruction)
+
+
+Estado 34
+
+    5 NT_Instruction: NT_Chgrp .
+
+    $default  reduce usando la regla 5 (NT_Instruction)
+
+
+Estado 35
+
+    6 NT_Instruction: NT_Chmod .
+
+    $default  reduce usando la regla 6 (NT_Instruction)
+
+
+Estado 36
+
+    7 NT_Instruction: NT_Chown .
+
+    $default  reduce usando la regla 7 (NT_Instruction)
+
+
+Estado 37
+
+    8 NT_Instruction: NT_Cp .
+
+    $default  reduce usando la regla 8 (NT_Instruction)
+
+
+Estado 38
+
+    9 NT_Instruction: NT_Edit .
+
+    $default  reduce usando la regla 9 (NT_Instruction)
+
+
+Estado 39
+
+   10 NT_Instruction: NT_Exec .
+
+    $default  reduce usando la regla 10 (NT_Instruction)
+
+
+Estado 40
+
+   11 NT_Instruction: NT_Fdisk .
+
+    $default  reduce usando la regla 11 (NT_Instruction)
+
+
+Estado 41
+
+   12 NT_Instruction: NT_Find .
+
+    $default  reduce usando la regla 12 (NT_Instruction)
+
+
+Estado 42
+
+   13 NT_Instruction: NT_Login .
+
+    $default  reduce usando la regla 13 (NT_Instruction)
+
+
+Estado 43
+
+   14 NT_Instruction: NT_Logout .
+
+    $default  reduce usando la regla 14 (NT_Instruction)
+
+
+Estado 44
+
+   15 NT_Instruction: NT_Loss .
+
+    $default  reduce usando la regla 15 (NT_Instruction)
+
+
+Estado 45
+
+   16 NT_Instruction: NT_Mkdir .
+
+    $default  reduce usando la regla 16 (NT_Instruction)
+
+
+Estado 46
+
+   17 NT_Instruction: NT_Mkdisk .
+
+    $default  reduce usando la regla 17 (NT_Instruction)
+
+
+Estado 47
+
+   18 NT_Instruction: NT_Mkfile .
+
+    $default  reduce usando la regla 18 (NT_Instruction)
+
+
+Estado 48
+
+   19 NT_Instruction: NT_Mkfs .
+
+    $default  reduce usando la regla 19 (NT_Instruction)
+
+
+Estado 49
+
+   20 NT_Instruction: NT_Mkgrp .
+
+    $default  reduce usando la regla 20 (NT_Instruction)
+
+
+Estado 50
+
+   21 NT_Instruction: NT_Mkusr .
+
+    $default  reduce usando la regla 21 (NT_Instruction)
+
+
+Estado 51
+
+   22 NT_Instruction: NT_Mount .
+
+    $default  reduce usando la regla 22 (NT_Instruction)
+
+
+Estado 52
+
+   23 NT_Instruction: NT_Mv .
+
+    $default  reduce usando la regla 23 (NT_Instruction)
+
+
+Estado 53
+
+   24 NT_Instruction: NT_Pause .
+
+    $default  reduce usando la regla 24 (NT_Instruction)
+
+
+Estado 54
+
+   25 NT_Instruction: NT_Recovery .
+
+    $default  reduce usando la regla 25 (NT_Instruction)
+
+
+Estado 55
+
+   27 NT_Instruction: NT_Ren .
+
+    $default  reduce usando la regla 27 (NT_Instruction)
+
+
+Estado 56
+
+   28 NT_Instruction: NT_Rep .
+
+    $default  reduce usando la regla 28 (NT_Instruction)
+
+
+Estado 57
+
+   26 NT_Instruction: NT_Rm .
+
+    $default  reduce usando la regla 26 (NT_Instruction)
+
+
+Estado 58
+
+   29 NT_Instruction: NT_Rmdisk .
+
+    $default  reduce usando la regla 29 (NT_Instruction)
+
+
+Estado 59
+
+   30 NT_Instruction: NT_Rmgrp .
+
+    $default  reduce usando la regla 30 (NT_Instruction)
+
+
+Estado 60
+
+   31 NT_Instruction: NT_Rmusr .
+
+    $default  reduce usando la regla 31 (NT_Instruction)
+
+
+Estado 61
+
+   32 NT_Instruction: NT_Unmount .
+
+    $default  reduce usando la regla 32 (NT_Instruction)
+
+
+Estado 62
+
+   35 NT_Parameterscat: SYM_Ampersand . NT_Parametercat
+
+    RW_Filen  desplazar e ir al estado 114
+    RW_Id     desplazar e ir al estado 115
+
+    NT_Parametercat  ir al estado 116
+
+
+Estado 63
+
+   33 NT_Cat: RW_Cat NT_Parameterscat .
+   34 NT_Parameterscat: NT_Parameterscat . SYM_Ampersand NT_Parametercat
+
+    SYM_Ampersand  desplazar e ir al estado 117
+
+    $default  reduce usando la regla 33 (NT_Cat)
+
+
+Estado 64
+
+   41 NT_Parameterschgrp: SYM_Ampersand . NT_Parameterchgrp
+
+    RW_Grp  desplazar e ir al estado 118
+    RW_Usr  desplazar e ir al estado 119
+
+    NT_Parameterchgrp  ir al estado 120
+
+
+Estado 65
+
+   39 NT_Chgrp: RW_Chgrp NT_Parameterschgrp .
+   40 NT_Parameterschgrp: NT_Parameterschgrp . SYM_Ampersand NT_Parameterchgrp
+
+    SYM_Ampersand  desplazar e ir al estado 121
+
+    $default  reduce usando la regla 39 (NT_Chgrp)
+
+
+Estado 66
+
+   48 NT_Parameterschmod: SYM_Ampersand . NT_Parameterchmod
+
+    RW_Id    desplazar e ir al estado 122
+    RW_Path  desplazar e ir al estado 123
+    RW_R     desplazar e ir al estado 124
+    RW_Ugo   desplazar e ir al estado 125
+
+    NT_Parameterchmod  ir al estado 126
+
+
+Estado 67
+
+   46 NT_Chmod: RW_Chmod NT_Parameterschmod .
+   47 NT_Parameterschmod: NT_Parameterschmod . SYM_Ampersand NT_Parameterchmod
+
+    SYM_Ampersand  desplazar e ir al estado 127
+
+    $default  reduce usando la regla 46 (NT_Chmod)
+
+
+Estado 68
+
+   56 NT_Parameterschown: SYM_Ampersand . NT_Parameterchown
+
+    RW_Id    desplazar e ir al estado 128
+    RW_Path  desplazar e ir al estado 129
+    RW_R     desplazar e ir al estado 130
+    RW_Usr   desplazar e ir al estado 131
+
+    NT_Parameterchown  ir al estado 132
+
+
+Estado 69
+
+   54 NT_Chown: RW_Chown NT_Parameterschown .
+   55 NT_Parameterschown: NT_Parameterschown . SYM_Ampersand NT_Parameterchown
+
+    SYM_Ampersand  desplazar e ir al estado 133
+
+    $default  reduce usando la regla 54 (NT_Chown)
+
+
+Estado 70
+
+   65 NT_Parameterscp: SYM_Ampersand . NT_Parametercp
+
+    RW_Destiny  desplazar e ir al estado 134
+    RW_Id       desplazar e ir al estado 135
+    RW_Path     desplazar e ir al estado 136
+
+    NT_Parametercp  ir al estado 137
+
+
+Estado 71
+
+   63 NT_Cp: RW_Cp NT_Parameterscp .
+   64 NT_Parameterscp: NT_Parameterscp . SYM_Ampersand NT_Parametercp
+
+    SYM_Ampersand  desplazar e ir al estado 138
+
+    $default  reduce usando la regla 63 (NT_Cp)
+
+
+Estado 72
+
+   73 NT_Parametersedit: SYM_Ampersand . NT_Parameteredit
+
+    RW_Cont  desplazar e ir al estado 139
+    RW_Id    desplazar e ir al estado 140
+    RW_Path  desplazar e ir al estado 141
+    RW_Size  desplazar e ir al estado 142
+
+    NT_Parameteredit  ir al estado 143
+
+
+Estado 73
+
+   71 NT_Edit: RW_Edit NT_Parametersedit .
+   72 NT_Parametersedit: NT_Parametersedit . SYM_Ampersand NT_Parameteredit
+
+    SYM_Ampersand  desplazar e ir al estado 144
+
+    $default  reduce usando la regla 71 (NT_Edit)
+
+
+Estado 74
+
+   79 NT_Exec: RW_Exec SYM_Ampersand . RW_Path SYM_Arrow RE_Path
+   80        | RW_Exec SYM_Ampersand . RW_Path SYM_Arrow RE_String
+
+    RW_Path  desplazar e ir al estado 145
+
+
+Estado 75
+
+   83 NT_Parametersfdisk: SYM_Ampersand . NT_Parameterfdisk
+
+    RW_Add     desplazar e ir al estado 146
+    RW_Delete  desplazar e ir al estado 147
+    RW_Fit     desplazar e ir al estado 148
+    RW_Name    desplazar e ir al estado 149
+    RW_Path    desplazar e ir al estado 150
+    RW_Size    desplazar e ir al estado 151
+    RW_Type    desplazar e ir al estado 152
+    RW_Unit    desplazar e ir al estado 153
+
+    NT_Parameterfdisk  ir al estado 154
+
+
+Estado 76
+
+   81 NT_Fdisk: RW_Fdisk NT_Parametersfdisk .
+   82 NT_Parametersfdisk: NT_Parametersfdisk . SYM_Ampersand NT_Parameterfdisk
+
+    SYM_Ampersand  desplazar e ir al estado 155
+
+    $default  reduce usando la regla 81 (NT_Fdisk)
+
+
+Estado 77
+
+   98 NT_Parametersfind: SYM_Ampersand . NT_Parameterfind
+
+    RW_Id    desplazar e ir al estado 156
+    RW_Name  desplazar e ir al estado 157
+    RW_Path  desplazar e ir al estado 158
+
+    NT_Parameterfind  ir al estado 159
+
+
+Estado 78
+
+   96 NT_Find: RW_Find NT_Parametersfind .
+   97 NT_Parametersfind: NT_Parametersfind . SYM_Ampersand NT_Parameterfind
+
+    SYM_Ampersand  desplazar e ir al estado 160
+
+    $default  reduce usando la regla 96 (NT_Find)
+
+
+Estado 79
+
+  106 NT_Parameterslogin: SYM_Ampersand . NT_Parameterlogin
+
+    RW_Id   desplazar e ir al estado 161
+    RW_Pwd  desplazar e ir al estado 162
+    RW_Usr  desplazar e ir al estado 163
+
+    NT_Parameterlogin  ir al estado 164
+
+
+Estado 80
+
+  104 NT_Login: RW_Login NT_Parameterslogin .
+  105 NT_Parameterslogin: NT_Parameterslogin . SYM_Ampersand NT_Parameterlogin
+
+    SYM_Ampersand  desplazar e ir al estado 165
+
+    $default  reduce usando la regla 104 (NT_Login)
+
+
+Estado 81
+
+  114 NT_Loss: RW_Loss SYM_Ampersand . RW_Id SYM_Arrow RE_Id
+
+    RW_Id  desplazar e ir al estado 166
+
+
+Estado 82
+
+  117 NT_Parametersmkdir: SYM_Ampersand . NT_Parametermkdir
+
+    RW_Id    desplazar e ir al estado 167
+    RW_P     desplazar e ir al estado 168
+    RW_Path  desplazar e ir al estado 169
+
+    NT_Parametermkdir  ir al estado 170
+
+
+Estado 83
+
+  115 NT_Mkdir: RW_Mkdir NT_Parametersmkdir .
+  116 NT_Parametersmkdir: NT_Parametersmkdir . SYM_Ampersand NT_Parametermkdir
+
+    SYM_Ampersand  desplazar e ir al estado 171
+
+    $default  reduce usando la regla 115 (NT_Mkdir)
+
+
+Estado 84
+
+  124 NT_Parametersmkdisk: SYM_Ampersand . NT_Parametermkdisk
+
+    RW_Name  desplazar e ir al estado 172
+    RW_Path  desplazar e ir al estado 173
+    RW_Size  desplazar e ir al estado 174
+    RW_Unit  desplazar e ir al estado 175
+
+    NT_Parametermkdisk  ir al estado 176
+
+
+Estado 85
+
+  122 NT_Mkdisk: RW_Mkdisk NT_Parametersmkdisk .
+  123 NT_Parametersmkdisk: NT_Parametersmkdisk . SYM_Ampersand NT_Parametermkdisk
+
+    SYM_Ampersand  desplazar e ir al estado 177
+
+    $default  reduce usando la regla 122 (NT_Mkdisk)
+
+
+Estado 86
+
+  132 NT_Parametersmkfile: SYM_Ampersand . NT_Parametermkfile
+
+    RW_Cont  desplazar e ir al estado 178
+    RW_Id    desplazar e ir al estado 179
+    RW_P     desplazar e ir al estado 180
+    RW_Path  desplazar e ir al estado 181
+    RW_Size  desplazar e ir al estado 182
+
+    NT_Parametermkfile  ir al estado 183
+
+
+Estado 87
+
+  130 NT_Mkfile: RW_Mkfile NT_Parametersmkfile .
+  131 NT_Parametersmkfile: NT_Parametersmkfile . SYM_Ampersand NT_Parametermkfile
+
+    SYM_Ampersand  desplazar e ir al estado 184
+
+    $default  reduce usando la regla 130 (NT_Mkfile)
+
+
+Estado 88
+
+  141 NT_Parametersmkfs: SYM_Ampersand . NT_Parametermkfs
+
+    RW_Id    desplazar e ir al estado 185
+    RW_Type  desplazar e ir al estado 186
+
+    NT_Parametermkfs  ir al estado 187
+
+
+Estado 89
+
+  139 NT_Mkfs: RW_Mkfs NT_Parametersmkfs .
+  140 NT_Parametersmkfs: NT_Parametersmkfs . SYM_Ampersand NT_Parametermkfs
+
+    SYM_Ampersand  desplazar e ir al estado 188
+
+    $default  reduce usando la regla 139 (NT_Mkfs)
+
+
+Estado 90
+
+  146 NT_Parametersmkgrp: SYM_Ampersand . NT_Parametermkgrp
+
+    RW_Id    desplazar e ir al estado 189
+    RW_Name  desplazar e ir al estado 190
+
+    NT_Parametermkgrp  ir al estado 191
+
+
+Estado 91
+
+  144 NT_Mkgrp: RW_Mkgrp NT_Parametersmkgrp .
+  145 NT_Parametersmkgrp: NT_Parametersmkgrp . SYM_Ampersand NT_Parametermkgrp
+
+    SYM_Ampersand  desplazar e ir al estado 192
+
+    $default  reduce usando la regla 144 (NT_Mkgrp)
+
+
+Estado 92
+
+  152 NT_Parametersmkusr: SYM_Ampersand . NT_Parametermkusr
+
+    RW_Grp  desplazar e ir al estado 193
+    RW_Id   desplazar e ir al estado 194
+    RW_Pwd  desplazar e ir al estado 195
+    RW_Usr  desplazar e ir al estado 196
+
+    NT_Parametermkusr  ir al estado 197
+
+
+Estado 93
+
+  150 NT_Mkusr: RW_Mkusr NT_Parametersmkusr .
+  151 NT_Parametersmkusr: NT_Parametersmkusr . SYM_Ampersand NT_Parametermkusr
+
+    SYM_Ampersand  desplazar e ir al estado 198
+
+    $default  reduce usando la regla 150 (NT_Mkusr)
+
+
+Estado 94
+
+  163 NT_Parametersmount: SYM_Ampersand . NT_Parametermount
+
+    RW_Name  desplazar e ir al estado 199
+    RW_Path  desplazar e ir al estado 200
+
+    NT_Parametermount  ir al estado 201
+
+
+Estado 95
+
+  161 NT_Mount: RW_Mount NT_Parametersmount .
+  162 NT_Parametersmount: NT_Parametersmount . SYM_Ampersand NT_Parametermount
+
+    SYM_Ampersand  desplazar e ir al estado 202
+
+    $default  reduce usando la regla 161 (NT_Mount)
+
+
+Estado 96
+
+  170 NT_Parametersmv: SYM_Ampersand . NT_Parametermv
+
+    RW_Destiny  desplazar e ir al estado 203
+    RW_Id       desplazar e ir al estado 204
+    RW_Path     desplazar e ir al estado 205
+
+    NT_Parametermv  ir al estado 206
+
+
+Estado 97
+
+  168 NT_Mv: RW_Mv NT_Parametersmv .
+  169 NT_Parametersmv: NT_Parametersmv . SYM_Ampersand NT_Parametermv
+
+    SYM_Ampersand  desplazar e ir al estado 207
+
+    $default  reduce usando la regla 168 (NT_Mv)
+
+
+Estado 98
+
+  177 NT_Recovery: RW_Recovery SYM_Ampersand . RW_Id SYM_Arrow RE_Id
+
+    RW_Id  desplazar e ir al estado 208
+
+
+Estado 99
+
+  180 NT_Parametersren: SYM_Ampersand . NT_Parameterren
+
+    RW_Id    desplazar e ir al estado 209
+    RW_Name  desplazar e ir al estado 210
+    RW_Path  desplazar e ir al estado 211
+
+    NT_Parameterren  ir al estado 212
+
+
+Estado 100
+
+  178 NT_Ren: RW_Ren NT_Parametersren .
+  179 NT_Parametersren: NT_Parametersren . SYM_Ampersand NT_Parameterren
+
+    SYM_Ampersand  desplazar e ir al estado 213
+
+    $default  reduce usando la regla 178 (NT_Ren)
+
+
+Estado 101
+
+  188 NT_Parametersrep: SYM_Ampersand . NT_Parameterrep
+
+    RW_Id    desplazar e ir al estado 214
+    RW_Name  desplazar e ir al estado 215
+    RW_Path  desplazar e ir al estado 216
+    RW_Ruta  desplazar e ir al estado 217
+
+    NT_Parameterrep  ir al estado 218
+
+
+Estado 102
+
+  186 NT_Rep: RW_Rep NT_Parametersrep .
+  187 NT_Parametersrep: NT_Parametersrep . SYM_Ampersand NT_Parameterrep
+
+    SYM_Ampersand  desplazar e ir al estado 219
+
+    $default  reduce usando la regla 186 (NT_Rep)
+
+
+Estado 103
+
+  198 NT_Parametersrm: SYM_Ampersand . NT_Parameterrm
+
+    RW_Id    desplazar e ir al estado 220
+    RW_Path  desplazar e ir al estado 221
+    RW_Rf    desplazar e ir al estado 222
+
+    NT_Parameterrm  ir al estado 223
+
+
+Estado 104
+
+  196 NT_Rm: RW_Rm NT_Parametersrm .
+  197 NT_Parametersrm: NT_Parametersrm . SYM_Ampersand NT_Parameterrm
+
+    SYM_Ampersand  desplazar e ir al estado 224
+
+    $default  reduce usando la regla 196 (NT_Rm)
+
+
+Estado 105
+
+  203 NT_Rmdisk: RW_Rmdisk SYM_Ampersand . RW_Path SYM_Arrow RE_String
+  204          | RW_Rmdisk SYM_Ampersand . RW_Path SYM_Arrow RE_Path
+
+    RW_Path  desplazar e ir al estado 225
+
+
+Estado 106
+
+  207 NT_Parametersrmgrp: SYM_Ampersand . NT_Parameterrmgrp
+
+    RW_Id    desplazar e ir al estado 226
+    RW_Name  desplazar e ir al estado 227
+
+    NT_Parameterrmgrp  ir al estado 228
+
+
+Estado 107
+
+  205 NT_Rmgrp: RW_Rmgrp NT_Parametersrmgrp .
+  206 NT_Parametersrmgrp: NT_Parametersrmgrp . SYM_Ampersand NT_Parameterrmgrp
+
+    SYM_Ampersand  desplazar e ir al estado 229
+
+    $default  reduce usando la regla 205 (NT_Rmgrp)
+
+
+Estado 108
+
+  213 NT_Parametersrmusr: SYM_Ampersand . NT_Parameterrmusr
+
+    RW_Id   desplazar e ir al estado 230
+    RW_Usr  desplazar e ir al estado 231
+
+    NT_Parameterrmusr  ir al estado 232
+
+
+Estado 109
+
+  211 NT_Rmusr: RW_Rmusr NT_Parametersrmusr .
+  212 NT_Parametersrmusr: NT_Parametersrmusr . SYM_Ampersand NT_Parameterrmusr
+
+    SYM_Ampersand  desplazar e ir al estado 233
+
+    $default  reduce usando la regla 211 (NT_Rmusr)
+
+
+Estado 110
+
+  219 NT_Parametersunmount: SYM_Ampersand . NT_Parameterunmount
+
+    RW_Idn  desplazar e ir al estado 234
+
+    NT_Parameterunmount  ir al estado 235
+
+
+Estado 111
+
+  217 NT_Unmount: RW_Unmount NT_Parametersunmount .
+  218 NT_Parametersunmount: NT_Parametersunmount . SYM_Ampersand NT_Parameterunmount
+
+    SYM_Ampersand  desplazar e ir al estado 236
+
+    $default  reduce usando la regla 217 (NT_Unmount)
+
+
+Estado 112
+
+    0 $accept: Start $end .
+
+    $default  aceptar
+
+
+Estado 113
+
+    2 NT_Instructions: NT_Instructions NT_Instruction .
+
+    $default  reduce usando la regla 2 (NT_Instructions)
+
+
+Estado 114
+
+   37 NT_Parametercat: RW_Filen . SYM_Arrow RE_String
+   38                | RW_Filen . SYM_Arrow RE_Path
+
+    SYM_Arrow  desplazar e ir al estado 237
+
+
+Estado 115
+
+   36 NT_Parametercat: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 238
+
+
+Estado 116
+
+   35 NT_Parameterscat: SYM_Ampersand NT_Parametercat .
+
+    $default  reduce usando la regla 35 (NT_Parameterscat)
+
+
+Estado 117
+
+   34 NT_Parameterscat: NT_Parameterscat SYM_Ampersand . NT_Parametercat
+
+    RW_Filen  desplazar e ir al estado 114
+    RW_Id     desplazar e ir al estado 115
+
+    NT_Parametercat  ir al estado 239
+
+
+Estado 118
+
+   44 NT_Parameterchgrp: RW_Grp . SYM_Arrow RE_Id
+   45                  | RW_Grp . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 240
+
+
+Estado 119
+
+   42 NT_Parameterchgrp: RW_Usr . SYM_Arrow RE_Id
+   43                  | RW_Usr . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 241
+
+
+Estado 120
+
+   41 NT_Parameterschgrp: SYM_Ampersand NT_Parameterchgrp .
+
+    $default  reduce usando la regla 41 (NT_Parameterschgrp)
+
+
+Estado 121
+
+   40 NT_Parameterschgrp: NT_Parameterschgrp SYM_Ampersand . NT_Parameterchgrp
+
+    RW_Grp  desplazar e ir al estado 118
+    RW_Usr  desplazar e ir al estado 119
+
+    NT_Parameterchgrp  ir al estado 242
+
+
+Estado 122
+
+   51 NT_Parameterchmod: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 243
+
+
+Estado 123
+
+   49 NT_Parameterchmod: RW_Path . SYM_Arrow RE_Path
+   50                  | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 244
+
+
+Estado 124
+
+   53 NT_Parameterchmod: RW_R .
+
+    $default  reduce usando la regla 53 (NT_Parameterchmod)
+
+
+Estado 125
+
+   52 NT_Parameterchmod: RW_Ugo . SYM_Arrow RE_Number
+
+    SYM_Arrow  desplazar e ir al estado 245
+
+
+Estado 126
+
+   48 NT_Parameterschmod: SYM_Ampersand NT_Parameterchmod .
+
+    $default  reduce usando la regla 48 (NT_Parameterschmod)
+
+
+Estado 127
+
+   47 NT_Parameterschmod: NT_Parameterschmod SYM_Ampersand . NT_Parameterchmod
+
+    RW_Id    desplazar e ir al estado 122
+    RW_Path  desplazar e ir al estado 123
+    RW_R     desplazar e ir al estado 124
+    RW_Ugo   desplazar e ir al estado 125
+
+    NT_Parameterchmod  ir al estado 246
+
+
+Estado 128
+
+   59 NT_Parameterchown: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 247
+
+
+Estado 129
+
+   57 NT_Parameterchown: RW_Path . SYM_Arrow RE_Path
+   58                  | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 248
+
+
+Estado 130
+
+   60 NT_Parameterchown: RW_R .
+
+    $default  reduce usando la regla 60 (NT_Parameterchown)
+
+
+Estado 131
+
+   61 NT_Parameterchown: RW_Usr . SYM_Arrow RE_Id
+   62                  | RW_Usr . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 249
+
+
+Estado 132
+
+   56 NT_Parameterschown: SYM_Ampersand NT_Parameterchown .
+
+    $default  reduce usando la regla 56 (NT_Parameterschown)
+
+
+Estado 133
+
+   55 NT_Parameterschown: NT_Parameterschown SYM_Ampersand . NT_Parameterchown
+
+    RW_Id    desplazar e ir al estado 128
+    RW_Path  desplazar e ir al estado 129
+    RW_R     desplazar e ir al estado 130
+    RW_Usr   desplazar e ir al estado 131
+
+    NT_Parameterchown  ir al estado 250
+
+
+Estado 134
+
+   69 NT_Parametercp: RW_Destiny . SYM_Arrow RE_Path
+   70               | RW_Destiny . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 251
+
+
+Estado 135
+
+   68 NT_Parametercp: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 252
+
+
+Estado 136
+
+   66 NT_Parametercp: RW_Path . SYM_Arrow RE_Path
+   67               | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 253
+
+
+Estado 137
+
+   65 NT_Parameterscp: SYM_Ampersand NT_Parametercp .
+
+    $default  reduce usando la regla 65 (NT_Parameterscp)
+
+
+Estado 138
+
+   64 NT_Parameterscp: NT_Parameterscp SYM_Ampersand . NT_Parametercp
+
+    RW_Destiny  desplazar e ir al estado 134
+    RW_Id       desplazar e ir al estado 135
+    RW_Path     desplazar e ir al estado 136
+
+    NT_Parametercp  ir al estado 254
+
+
+Estado 139
+
+   78 NT_Parameteredit: RW_Cont . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 255
+
+
+Estado 140
+
+   76 NT_Parameteredit: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 256
+
+
+Estado 141
+
+   74 NT_Parameteredit: RW_Path . SYM_Arrow RE_Path
+   75                 | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 257
+
+
+Estado 142
+
+   77 NT_Parameteredit: RW_Size . SYM_Arrow RE_Number
+
+    SYM_Arrow  desplazar e ir al estado 258
+
+
+Estado 143
+
+   73 NT_Parametersedit: SYM_Ampersand NT_Parameteredit .
+
+    $default  reduce usando la regla 73 (NT_Parametersedit)
+
+
+Estado 144
+
+   72 NT_Parametersedit: NT_Parametersedit SYM_Ampersand . NT_Parameteredit
+
+    RW_Cont  desplazar e ir al estado 139
+    RW_Id    desplazar e ir al estado 140
+    RW_Path  desplazar e ir al estado 141
+    RW_Size  desplazar e ir al estado 142
+
+    NT_Parameteredit  ir al estado 259
+
+
+Estado 145
+
+   79 NT_Exec: RW_Exec SYM_Ampersand RW_Path . SYM_Arrow RE_Path
+   80        | RW_Exec SYM_Ampersand RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 260
+
+
+Estado 146
+
+   94 NT_Parameterfdisk: RW_Add . SYM_Arrow RE_Number
+   95                  | RW_Add . SYM_Arrow SYM_Hyphen RE_Number
+
+    SYM_Arrow  desplazar e ir al estado 261
+
+
+Estado 147
+
+   91 NT_Parameterfdisk: RW_Delete . SYM_Arrow RE_Delete
+
+    SYM_Arrow  desplazar e ir al estado 262
+
+
+Estado 148
+
+   90 NT_Parameterfdisk: RW_Fit . SYM_Arrow RE_Fit
+
+    SYM_Arrow  desplazar e ir al estado 263
+
+
+Estado 149
+
+   92 NT_Parameterfdisk: RW_Name . SYM_Arrow RE_String
+   93                  | RW_Name . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 264
+
+
+Estado 150
+
+   86 NT_Parameterfdisk: RW_Path . SYM_Arrow RE_Path
+   87                  | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 265
+
+
+Estado 151
+
+   84 NT_Parameterfdisk: RW_Size . SYM_Arrow RE_Number
+
+    SYM_Arrow  desplazar e ir al estado 266
+
+
+Estado 152
+
+   88 NT_Parameterfdisk: RW_Type . SYM_Arrow RE_Type
+   89                  | RW_Type . SYM_Arrow RW_P
+
+    SYM_Arrow  desplazar e ir al estado 267
+
+
+Estado 153
+
+   85 NT_Parameterfdisk: RW_Unit . SYM_Arrow RE_Unit
+
+    SYM_Arrow  desplazar e ir al estado 268
+
+
+Estado 154
+
+   83 NT_Parametersfdisk: SYM_Ampersand NT_Parameterfdisk .
+
+    $default  reduce usando la regla 83 (NT_Parametersfdisk)
+
+
+Estado 155
+
+   82 NT_Parametersfdisk: NT_Parametersfdisk SYM_Ampersand . NT_Parameterfdisk
+
+    RW_Add     desplazar e ir al estado 146
+    RW_Delete  desplazar e ir al estado 147
+    RW_Fit     desplazar e ir al estado 148
+    RW_Name    desplazar e ir al estado 149
+    RW_Path    desplazar e ir al estado 150
+    RW_Size    desplazar e ir al estado 151
+    RW_Type    desplazar e ir al estado 152
+    RW_Unit    desplazar e ir al estado 153
+
+    NT_Parameterfdisk  ir al estado 269
+
+
+Estado 156
+
+  101 NT_Parameterfind: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 270
+
+
+Estado 157
+
+  102 NT_Parameterfind: RW_Name . SYM_Arrow RE_Name2
+  103                 | RW_Name . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 271
+
+
+Estado 158
+
+   99 NT_Parameterfind: RW_Path . SYM_Arrow RE_Path
+  100                 | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 272
+
+
+Estado 159
+
+   98 NT_Parametersfind: SYM_Ampersand NT_Parameterfind .
+
+    $default  reduce usando la regla 98 (NT_Parametersfind)
+
+
+Estado 160
+
+   97 NT_Parametersfind: NT_Parametersfind SYM_Ampersand . NT_Parameterfind
+
+    RW_Id    desplazar e ir al estado 156
+    RW_Name  desplazar e ir al estado 157
+    RW_Path  desplazar e ir al estado 158
+
+    NT_Parameterfind  ir al estado 273
+
+
+Estado 161
+
+  112 NT_Parameterlogin: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 274
+
+
+Estado 162
+
+  109 NT_Parameterlogin: RW_Pwd . SYM_Arrow RE_Id
+  110                  | RW_Pwd . SYM_Arrow RE_String
+  111                  | RW_Pwd . SYM_Arrow RE_Number
+
+    SYM_Arrow  desplazar e ir al estado 275
+
+
+Estado 163
+
+  107 NT_Parameterlogin: RW_Usr . SYM_Arrow RE_Id
+  108                  | RW_Usr . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 276
+
+
+Estado 164
+
+  106 NT_Parameterslogin: SYM_Ampersand NT_Parameterlogin .
+
+    $default  reduce usando la regla 106 (NT_Parameterslogin)
+
+
+Estado 165
+
+  105 NT_Parameterslogin: NT_Parameterslogin SYM_Ampersand . NT_Parameterlogin
+
+    RW_Id   desplazar e ir al estado 161
+    RW_Pwd  desplazar e ir al estado 162
+    RW_Usr  desplazar e ir al estado 163
+
+    NT_Parameterlogin  ir al estado 277
+
+
+Estado 166
+
+  114 NT_Loss: RW_Loss SYM_Ampersand RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 278
+
+
+Estado 167
+
+  120 NT_Parametermkdir: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 279
+
+
+Estado 168
+
+  121 NT_Parametermkdir: RW_P .
+
+    $default  reduce usando la regla 121 (NT_Parametermkdir)
+
+
+Estado 169
+
+  118 NT_Parametermkdir: RW_Path . SYM_Arrow RE_Path
+  119                  | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 280
+
+
+Estado 170
+
+  117 NT_Parametersmkdir: SYM_Ampersand NT_Parametermkdir .
+
+    $default  reduce usando la regla 117 (NT_Parametersmkdir)
+
+
+Estado 171
+
+  116 NT_Parametersmkdir: NT_Parametersmkdir SYM_Ampersand . NT_Parametermkdir
+
+    RW_Id    desplazar e ir al estado 167
+    RW_P     desplazar e ir al estado 168
+    RW_Path  desplazar e ir al estado 169
+
+    NT_Parametermkdir  ir al estado 281
+
+
+Estado 172
+
+  129 NT_Parametermkdisk: RW_Name . SYM_Arrow RE_Name2
+
+    SYM_Arrow  desplazar e ir al estado 282
+
+
+Estado 173
+
+  127 NT_Parametermkdisk: RW_Path . SYM_Arrow RE_String
+  128                   | RW_Path . SYM_Arrow RE_Path
+
+    SYM_Arrow  desplazar e ir al estado 283
+
+
+Estado 174
+
+  125 NT_Parametermkdisk: RW_Size . SYM_Arrow RE_Number
+
+    SYM_Arrow  desplazar e ir al estado 284
+
+
+Estado 175
+
+  126 NT_Parametermkdisk: RW_Unit . SYM_Arrow RE_Unit
+
+    SYM_Arrow  desplazar e ir al estado 285
+
+
+Estado 176
+
+  124 NT_Parametersmkdisk: SYM_Ampersand NT_Parametermkdisk .
+
+    $default  reduce usando la regla 124 (NT_Parametersmkdisk)
+
+
+Estado 177
+
+  123 NT_Parametersmkdisk: NT_Parametersmkdisk SYM_Ampersand . NT_Parametermkdisk
+
+    RW_Name  desplazar e ir al estado 172
+    RW_Path  desplazar e ir al estado 173
+    RW_Size  desplazar e ir al estado 174
+    RW_Unit  desplazar e ir al estado 175
+
+    NT_Parametermkdisk  ir al estado 286
+
+
+Estado 178
+
+  138 NT_Parametermkfile: RW_Cont . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 287
+
+
+Estado 179
+
+  135 NT_Parametermkfile: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 288
+
+
+Estado 180
+
+  136 NT_Parametermkfile: RW_P .
+
+    $default  reduce usando la regla 136 (NT_Parametermkfile)
+
+
+Estado 181
+
+  133 NT_Parametermkfile: RW_Path . SYM_Arrow RE_Path
+  134                   | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 289
+
+
+Estado 182
+
+  137 NT_Parametermkfile: RW_Size . SYM_Arrow RE_Number
+
+    SYM_Arrow  desplazar e ir al estado 290
+
+
+Estado 183
+
+  132 NT_Parametersmkfile: SYM_Ampersand NT_Parametermkfile .
+
+    $default  reduce usando la regla 132 (NT_Parametersmkfile)
+
+
+Estado 184
+
+  131 NT_Parametersmkfile: NT_Parametersmkfile SYM_Ampersand . NT_Parametermkfile
+
+    RW_Cont  desplazar e ir al estado 178
+    RW_Id    desplazar e ir al estado 179
+    RW_P     desplazar e ir al estado 180
+    RW_Path  desplazar e ir al estado 181
+    RW_Size  desplazar e ir al estado 182
+
+    NT_Parametermkfile  ir al estado 291
+
+
+Estado 185
+
+  142 NT_Parametermkfs: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 292
+
+
+Estado 186
+
+  143 NT_Parametermkfs: RW_Type . SYM_Arrow RE_Delete
+
+    SYM_Arrow  desplazar e ir al estado 293
+
+
+Estado 187
+
+  141 NT_Parametersmkfs: SYM_Ampersand NT_Parametermkfs .
+
+    $default  reduce usando la regla 141 (NT_Parametersmkfs)
+
+
+Estado 188
+
+  140 NT_Parametersmkfs: NT_Parametersmkfs SYM_Ampersand . NT_Parametermkfs
+
+    RW_Id    desplazar e ir al estado 185
+    RW_Type  desplazar e ir al estado 186
+
+    NT_Parametermkfs  ir al estado 294
+
+
+Estado 189
+
+  147 NT_Parametermkgrp: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 295
+
+
+Estado 190
+
+  148 NT_Parametermkgrp: RW_Name . SYM_Arrow RE_Id
+  149                  | RW_Name . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 296
+
+
+Estado 191
+
+  146 NT_Parametersmkgrp: SYM_Ampersand NT_Parametermkgrp .
+
+    $default  reduce usando la regla 146 (NT_Parametersmkgrp)
+
+
+Estado 192
+
+  145 NT_Parametersmkgrp: NT_Parametersmkgrp SYM_Ampersand . NT_Parametermkgrp
+
+    RW_Id    desplazar e ir al estado 189
+    RW_Name  desplazar e ir al estado 190
+
+    NT_Parametermkgrp  ir al estado 297
+
+
+Estado 193
+
+  159 NT_Parametermkusr: RW_Grp . SYM_Arrow RE_Id
+  160                  | RW_Grp . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 298
+
+
+Estado 194
+
+  155 NT_Parametermkusr: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 299
+
+
+Estado 195
+
+  156 NT_Parametermkusr: RW_Pwd . SYM_Arrow RE_Id
+  157                  | RW_Pwd . SYM_Arrow RE_String
+  158                  | RW_Pwd . SYM_Arrow RE_Number
+
+    SYM_Arrow  desplazar e ir al estado 300
+
+
+Estado 196
+
+  153 NT_Parametermkusr: RW_Usr . SYM_Arrow RE_Id
+  154                  | RW_Usr . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 301
+
+
+Estado 197
+
+  152 NT_Parametersmkusr: SYM_Ampersand NT_Parametermkusr .
+
+    $default  reduce usando la regla 152 (NT_Parametersmkusr)
+
+
+Estado 198
+
+  151 NT_Parametersmkusr: NT_Parametersmkusr SYM_Ampersand . NT_Parametermkusr
+
+    RW_Grp  desplazar e ir al estado 193
+    RW_Id   desplazar e ir al estado 194
+    RW_Pwd  desplazar e ir al estado 195
+    RW_Usr  desplazar e ir al estado 196
+
+    NT_Parametermkusr  ir al estado 302
+
+
+Estado 199
+
+  166 NT_Parametermount: RW_Name . SYM_Arrow RE_String
+  167                  | RW_Name . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 303
+
+
+Estado 200
+
+  164 NT_Parametermount: RW_Path . SYM_Arrow RE_Path
+  165                  | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 304
+
+
+Estado 201
+
+  163 NT_Parametersmount: SYM_Ampersand NT_Parametermount .
+
+    $default  reduce usando la regla 163 (NT_Parametersmount)
+
+
+Estado 202
+
+  162 NT_Parametersmount: NT_Parametersmount SYM_Ampersand . NT_Parametermount
+
+    RW_Name  desplazar e ir al estado 199
+    RW_Path  desplazar e ir al estado 200
+
+    NT_Parametermount  ir al estado 305
+
+
+Estado 203
+
+  173 NT_Parametermv: RW_Destiny . SYM_Arrow RE_Path
+  174               | RW_Destiny . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 306
+
+
+Estado 204
+
+  175 NT_Parametermv: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 307
+
+
+Estado 205
+
+  171 NT_Parametermv: RW_Path . SYM_Arrow RE_Path
+  172               | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 308
+
+
+Estado 206
+
+  170 NT_Parametersmv: SYM_Ampersand NT_Parametermv .
+
+    $default  reduce usando la regla 170 (NT_Parametersmv)
+
+
+Estado 207
+
+  169 NT_Parametersmv: NT_Parametersmv SYM_Ampersand . NT_Parametermv
+
+    RW_Destiny  desplazar e ir al estado 203
+    RW_Id       desplazar e ir al estado 204
+    RW_Path     desplazar e ir al estado 205
+
+    NT_Parametermv  ir al estado 309
+
+
+Estado 208
+
+  177 NT_Recovery: RW_Recovery SYM_Ampersand RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 310
+
+
+Estado 209
+
+  183 NT_Parameterren: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 311
+
+
+Estado 210
+
+  184 NT_Parameterren: RW_Name . SYM_Arrow RE_Name2
+  185                | RW_Name . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 312
+
+
+Estado 211
+
+  181 NT_Parameterren: RW_Path . SYM_Arrow RE_Path
+  182                | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 313
+
+
+Estado 212
+
+  180 NT_Parametersren: SYM_Ampersand NT_Parameterren .
+
+    $default  reduce usando la regla 180 (NT_Parametersren)
+
+
+Estado 213
+
+  179 NT_Parametersren: NT_Parametersren SYM_Ampersand . NT_Parameterren
+
+    RW_Id    desplazar e ir al estado 209
+    RW_Name  desplazar e ir al estado 210
+    RW_Path  desplazar e ir al estado 211
+
+    NT_Parameterren  ir al estado 314
+
+
+Estado 214
+
+  193 NT_Parameterrep: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 315
+
+
+Estado 215
+
+  189 NT_Parameterrep: RW_Name . SYM_Arrow RE_Name
+  190                | RW_Name . SYM_Arrow RW_File
+
+    SYM_Arrow  desplazar e ir al estado 316
+
+
+Estado 216
+
+  191 NT_Parameterrep: RW_Path . SYM_Arrow RE_Path
+  192                | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 317
+
+
+Estado 217
+
+  194 NT_Parameterrep: RW_Ruta . SYM_Arrow RE_Path
+  195                | RW_Ruta . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 318
+
+
+Estado 218
+
+  188 NT_Parametersrep: SYM_Ampersand NT_Parameterrep .
+
+    $default  reduce usando la regla 188 (NT_Parametersrep)
+
+
+Estado 219
+
+  187 NT_Parametersrep: NT_Parametersrep SYM_Ampersand . NT_Parameterrep
+
+    RW_Id    desplazar e ir al estado 214
+    RW_Name  desplazar e ir al estado 215
+    RW_Path  desplazar e ir al estado 216
+    RW_Ruta  desplazar e ir al estado 217
+
+    NT_Parameterrep  ir al estado 319
+
+
+Estado 220
+
+  201 NT_Parameterrm: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 320
+
+
+Estado 221
+
+  199 NT_Parameterrm: RW_Path . SYM_Arrow RE_Path
+  200               | RW_Path . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 321
+
+
+Estado 222
+
+  202 NT_Parameterrm: RW_Rf .
+
+    $default  reduce usando la regla 202 (NT_Parameterrm)
+
+
+Estado 223
+
+  198 NT_Parametersrm: SYM_Ampersand NT_Parameterrm .
+
+    $default  reduce usando la regla 198 (NT_Parametersrm)
+
+
+Estado 224
+
+  197 NT_Parametersrm: NT_Parametersrm SYM_Ampersand . NT_Parameterrm
+
+    RW_Id    desplazar e ir al estado 220
+    RW_Path  desplazar e ir al estado 221
+    RW_Rf    desplazar e ir al estado 222
+
+    NT_Parameterrm  ir al estado 322
+
+
+Estado 225
+
+  203 NT_Rmdisk: RW_Rmdisk SYM_Ampersand RW_Path . SYM_Arrow RE_String
+  204          | RW_Rmdisk SYM_Ampersand RW_Path . SYM_Arrow RE_Path
+
+    SYM_Arrow  desplazar e ir al estado 323
+
+
+Estado 226
+
+  210 NT_Parameterrmgrp: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 324
+
+
+Estado 227
+
+  208 NT_Parameterrmgrp: RW_Name . SYM_Arrow RE_Id
+  209                  | RW_Name . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 325
+
+
+Estado 228
+
+  207 NT_Parametersrmgrp: SYM_Ampersand NT_Parameterrmgrp .
+
+    $default  reduce usando la regla 207 (NT_Parametersrmgrp)
+
+
+Estado 229
+
+  206 NT_Parametersrmgrp: NT_Parametersrmgrp SYM_Ampersand . NT_Parameterrmgrp
+
+    RW_Id    desplazar e ir al estado 226
+    RW_Name  desplazar e ir al estado 227
+
+    NT_Parameterrmgrp  ir al estado 326
+
+
+Estado 230
+
+  216 NT_Parameterrmusr: RW_Id . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 327
+
+
+Estado 231
+
+  214 NT_Parameterrmusr: RW_Usr . SYM_Arrow RE_Id
+  215                  | RW_Usr . SYM_Arrow RE_String
+
+    SYM_Arrow  desplazar e ir al estado 328
+
+
+Estado 232
+
+  213 NT_Parametersrmusr: SYM_Ampersand NT_Parameterrmusr .
+
+    $default  reduce usando la regla 213 (NT_Parametersrmusr)
+
+
+Estado 233
+
+  212 NT_Parametersrmusr: NT_Parametersrmusr SYM_Ampersand . NT_Parameterrmusr
+
+    RW_Id   desplazar e ir al estado 230
+    RW_Usr  desplazar e ir al estado 231
+
+    NT_Parameterrmusr  ir al estado 329
+
+
+Estado 234
+
+  220 NT_Parameterunmount: RW_Idn . SYM_Arrow RE_Id
+
+    SYM_Arrow  desplazar e ir al estado 330
+
+
+Estado 235
+
+  219 NT_Parametersunmount: SYM_Ampersand NT_Parameterunmount .
+
+    $default  reduce usando la regla 219 (NT_Parametersunmount)
+
+
+Estado 236
+
+  218 NT_Parametersunmount: NT_Parametersunmount SYM_Ampersand . NT_Parameterunmount
+
+    RW_Idn  desplazar e ir al estado 234
+
+    NT_Parameterunmount  ir al estado 331
+
+
+Estado 237
+
+   37 NT_Parametercat: RW_Filen SYM_Arrow . RE_String
+   38                | RW_Filen SYM_Arrow . RE_Path
+
+    RE_Path    desplazar e ir al estado 332
+    RE_String  desplazar e ir al estado 333
+
+
+Estado 238
+
+   36 NT_Parametercat: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 334
+
+
+Estado 239
+
+   34 NT_Parameterscat: NT_Parameterscat SYM_Ampersand NT_Parametercat .
+
+    $default  reduce usando la regla 34 (NT_Parameterscat)
+
+
+Estado 240
+
+   44 NT_Parameterchgrp: RW_Grp SYM_Arrow . RE_Id
+   45                  | RW_Grp SYM_Arrow . RE_String
+
+    RE_Id      desplazar e ir al estado 335
+    RE_String  desplazar e ir al estado 336
+
+
+Estado 241
+
+   42 NT_Parameterchgrp: RW_Usr SYM_Arrow . RE_Id
+   43                  | RW_Usr SYM_Arrow . RE_String
+
+    RE_Id      desplazar e ir al estado 337
+    RE_String  desplazar e ir al estado 338
+
+
+Estado 242
+
+   40 NT_Parameterschgrp: NT_Parameterschgrp SYM_Ampersand NT_Parameterchgrp .
+
+    $default  reduce usando la regla 40 (NT_Parameterschgrp)
+
+
+Estado 243
+
+   51 NT_Parameterchmod: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 339
+
+
+Estado 244
+
+   49 NT_Parameterchmod: RW_Path SYM_Arrow . RE_Path
+   50                  | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 340
+    RE_String  desplazar e ir al estado 341
+
+
+Estado 245
+
+   52 NT_Parameterchmod: RW_Ugo SYM_Arrow . RE_Number
+
+    RE_Number  desplazar e ir al estado 342
+
+
+Estado 246
+
+   47 NT_Parameterschmod: NT_Parameterschmod SYM_Ampersand NT_Parameterchmod .
+
+    $default  reduce usando la regla 47 (NT_Parameterschmod)
+
+
+Estado 247
+
+   59 NT_Parameterchown: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 343
+
+
+Estado 248
+
+   57 NT_Parameterchown: RW_Path SYM_Arrow . RE_Path
+   58                  | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 344
+    RE_String  desplazar e ir al estado 345
+
+
+Estado 249
+
+   61 NT_Parameterchown: RW_Usr SYM_Arrow . RE_Id
+   62                  | RW_Usr SYM_Arrow . RE_String
+
+    RE_Id      desplazar e ir al estado 346
+    RE_String  desplazar e ir al estado 347
+
+
+Estado 250
+
+   55 NT_Parameterschown: NT_Parameterschown SYM_Ampersand NT_Parameterchown .
+
+    $default  reduce usando la regla 55 (NT_Parameterschown)
+
+
+Estado 251
+
+   69 NT_Parametercp: RW_Destiny SYM_Arrow . RE_Path
+   70               | RW_Destiny SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 348
+    RE_String  desplazar e ir al estado 349
+
+
+Estado 252
+
+   68 NT_Parametercp: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 350
+
+
+Estado 253
+
+   66 NT_Parametercp: RW_Path SYM_Arrow . RE_Path
+   67               | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 351
+    RE_String  desplazar e ir al estado 352
+
+
+Estado 254
+
+   64 NT_Parameterscp: NT_Parameterscp SYM_Ampersand NT_Parametercp .
+
+    $default  reduce usando la regla 64 (NT_Parameterscp)
+
+
+Estado 255
+
+   78 NT_Parameteredit: RW_Cont SYM_Arrow . RE_String
+
+    RE_String  desplazar e ir al estado 353
+
+
+Estado 256
+
+   76 NT_Parameteredit: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 354
+
+
+Estado 257
+
+   74 NT_Parameteredit: RW_Path SYM_Arrow . RE_Path
+   75                 | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 355
+    RE_String  desplazar e ir al estado 356
+
+
+Estado 258
+
+   77 NT_Parameteredit: RW_Size SYM_Arrow . RE_Number
+
+    RE_Number  desplazar e ir al estado 357
+
+
+Estado 259
+
+   72 NT_Parametersedit: NT_Parametersedit SYM_Ampersand NT_Parameteredit .
+
+    $default  reduce usando la regla 72 (NT_Parametersedit)
+
+
+Estado 260
+
+   79 NT_Exec: RW_Exec SYM_Ampersand RW_Path SYM_Arrow . RE_Path
+   80        | RW_Exec SYM_Ampersand RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 358
+    RE_String  desplazar e ir al estado 359
+
+
+Estado 261
+
+   94 NT_Parameterfdisk: RW_Add SYM_Arrow . RE_Number
+   95                  | RW_Add SYM_Arrow . SYM_Hyphen RE_Number
+
+    SYM_Hyphen  desplazar e ir al estado 360
+    RE_Number   desplazar e ir al estado 361
+
+
+Estado 262
+
+   91 NT_Parameterfdisk: RW_Delete SYM_Arrow . RE_Delete
+
+    RE_Delete  desplazar e ir al estado 362
+
+
+Estado 263
+
+   90 NT_Parameterfdisk: RW_Fit SYM_Arrow . RE_Fit
+
+    RE_Fit  desplazar e ir al estado 363
+
+
+Estado 264
+
+   92 NT_Parameterfdisk: RW_Name SYM_Arrow . RE_String
+   93                  | RW_Name SYM_Arrow . RE_Id
+
+    RE_Id      desplazar e ir al estado 364
+    RE_String  desplazar e ir al estado 365
+
+
+Estado 265
+
+   86 NT_Parameterfdisk: RW_Path SYM_Arrow . RE_Path
+   87                  | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 366
+    RE_String  desplazar e ir al estado 367
+
+
+Estado 266
+
+   84 NT_Parameterfdisk: RW_Size SYM_Arrow . RE_Number
+
+    RE_Number  desplazar e ir al estado 368
+
+
+Estado 267
+
+   88 NT_Parameterfdisk: RW_Type SYM_Arrow . RE_Type
+   89                  | RW_Type SYM_Arrow . RW_P
+
+    RW_P     desplazar e ir al estado 369
+    RE_Type  desplazar e ir al estado 370
+
+
+Estado 268
+
+   85 NT_Parameterfdisk: RW_Unit SYM_Arrow . RE_Unit
+
+    RE_Unit  desplazar e ir al estado 371
+
+
+Estado 269
+
+   82 NT_Parametersfdisk: NT_Parametersfdisk SYM_Ampersand NT_Parameterfdisk .
+
+    $default  reduce usando la regla 82 (NT_Parametersfdisk)
+
+
+Estado 270
+
+  101 NT_Parameterfind: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 372
+
+
+Estado 271
+
+  102 NT_Parameterfind: RW_Name SYM_Arrow . RE_Name2
+  103                 | RW_Name SYM_Arrow . RE_String
+
+    RE_Name2   desplazar e ir al estado 373
+    RE_String  desplazar e ir al estado 374
+
+
+Estado 272
+
+   99 NT_Parameterfind: RW_Path SYM_Arrow . RE_Path
+  100                 | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 375
+    RE_String  desplazar e ir al estado 376
+
+
+Estado 273
+
+   97 NT_Parametersfind: NT_Parametersfind SYM_Ampersand NT_Parameterfind .
+
+    $default  reduce usando la regla 97 (NT_Parametersfind)
+
+
+Estado 274
+
+  112 NT_Parameterlogin: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 377
+
+
+Estado 275
+
+  109 NT_Parameterlogin: RW_Pwd SYM_Arrow . RE_Id
+  110                  | RW_Pwd SYM_Arrow . RE_String
+  111                  | RW_Pwd SYM_Arrow . RE_Number
+
+    RE_Id      desplazar e ir al estado 378
+    RE_Number  desplazar e ir al estado 379
+    RE_String  desplazar e ir al estado 380
+
+
+Estado 276
+
+  107 NT_Parameterlogin: RW_Usr SYM_Arrow . RE_Id
+  108                  | RW_Usr SYM_Arrow . RE_String
+
+    RE_Id      desplazar e ir al estado 381
+    RE_String  desplazar e ir al estado 382
+
+
+Estado 277
+
+  105 NT_Parameterslogin: NT_Parameterslogin SYM_Ampersand NT_Parameterlogin .
+
+    $default  reduce usando la regla 105 (NT_Parameterslogin)
+
+
+Estado 278
+
+  114 NT_Loss: RW_Loss SYM_Ampersand RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 383
+
+
+Estado 279
+
+  120 NT_Parametermkdir: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 384
+
+
+Estado 280
+
+  118 NT_Parametermkdir: RW_Path SYM_Arrow . RE_Path
+  119                  | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 385
+    RE_String  desplazar e ir al estado 386
+
+
+Estado 281
+
+  116 NT_Parametersmkdir: NT_Parametersmkdir SYM_Ampersand NT_Parametermkdir .
+
+    $default  reduce usando la regla 116 (NT_Parametersmkdir)
+
+
+Estado 282
+
+  129 NT_Parametermkdisk: RW_Name SYM_Arrow . RE_Name2
+
+    RE_Name2  desplazar e ir al estado 387
+
+
+Estado 283
+
+  127 NT_Parametermkdisk: RW_Path SYM_Arrow . RE_String
+  128                   | RW_Path SYM_Arrow . RE_Path
+
+    RE_Path    desplazar e ir al estado 388
+    RE_String  desplazar e ir al estado 389
+
+
+Estado 284
+
+  125 NT_Parametermkdisk: RW_Size SYM_Arrow . RE_Number
+
+    RE_Number  desplazar e ir al estado 390
+
+
+Estado 285
+
+  126 NT_Parametermkdisk: RW_Unit SYM_Arrow . RE_Unit
+
+    RE_Unit  desplazar e ir al estado 391
+
+
+Estado 286
+
+  123 NT_Parametersmkdisk: NT_Parametersmkdisk SYM_Ampersand NT_Parametermkdisk .
+
+    $default  reduce usando la regla 123 (NT_Parametersmkdisk)
+
+
+Estado 287
+
+  138 NT_Parametermkfile: RW_Cont SYM_Arrow . RE_String
+
+    RE_String  desplazar e ir al estado 392
+
+
+Estado 288
+
+  135 NT_Parametermkfile: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 393
+
+
+Estado 289
+
+  133 NT_Parametermkfile: RW_Path SYM_Arrow . RE_Path
+  134                   | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 394
+    RE_String  desplazar e ir al estado 395
+
+
+Estado 290
+
+  137 NT_Parametermkfile: RW_Size SYM_Arrow . RE_Number
+
+    RE_Number  desplazar e ir al estado 396
+
+
+Estado 291
+
+  131 NT_Parametersmkfile: NT_Parametersmkfile SYM_Ampersand NT_Parametermkfile .
+
+    $default  reduce usando la regla 131 (NT_Parametersmkfile)
+
+
+Estado 292
+
+  142 NT_Parametermkfs: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 397
+
+
+Estado 293
+
+  143 NT_Parametermkfs: RW_Type SYM_Arrow . RE_Delete
+
+    RE_Delete  desplazar e ir al estado 398
+
+
+Estado 294
+
+  140 NT_Parametersmkfs: NT_Parametersmkfs SYM_Ampersand NT_Parametermkfs .
+
+    $default  reduce usando la regla 140 (NT_Parametersmkfs)
+
+
+Estado 295
+
+  147 NT_Parametermkgrp: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 399
+
+
+Estado 296
+
+  148 NT_Parametermkgrp: RW_Name SYM_Arrow . RE_Id
+  149                  | RW_Name SYM_Arrow . RE_String
+
+    RE_Id      desplazar e ir al estado 400
+    RE_String  desplazar e ir al estado 401
+
+
+Estado 297
+
+  145 NT_Parametersmkgrp: NT_Parametersmkgrp SYM_Ampersand NT_Parametermkgrp .
+
+    $default  reduce usando la regla 145 (NT_Parametersmkgrp)
+
+
+Estado 298
+
+  159 NT_Parametermkusr: RW_Grp SYM_Arrow . RE_Id
+  160                  | RW_Grp SYM_Arrow . RE_String
+
+    RE_Id      desplazar e ir al estado 402
+    RE_String  desplazar e ir al estado 403
+
+
+Estado 299
+
+  155 NT_Parametermkusr: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 404
+
+
+Estado 300
+
+  156 NT_Parametermkusr: RW_Pwd SYM_Arrow . RE_Id
+  157                  | RW_Pwd SYM_Arrow . RE_String
+  158                  | RW_Pwd SYM_Arrow . RE_Number
+
+    RE_Id      desplazar e ir al estado 405
+    RE_Number  desplazar e ir al estado 406
+    RE_String  desplazar e ir al estado 407
+
+
+Estado 301
+
+  153 NT_Parametermkusr: RW_Usr SYM_Arrow . RE_Id
+  154                  | RW_Usr SYM_Arrow . RE_String
+
+    RE_Id      desplazar e ir al estado 408
+    RE_String  desplazar e ir al estado 409
+
+
+Estado 302
+
+  151 NT_Parametersmkusr: NT_Parametersmkusr SYM_Ampersand NT_Parametermkusr .
+
+    $default  reduce usando la regla 151 (NT_Parametersmkusr)
+
+
+Estado 303
+
+  166 NT_Parametermount: RW_Name SYM_Arrow . RE_String
+  167                  | RW_Name SYM_Arrow . RE_Id
+
+    RE_Id      desplazar e ir al estado 410
+    RE_String  desplazar e ir al estado 411
+
+
+Estado 304
+
+  164 NT_Parametermount: RW_Path SYM_Arrow . RE_Path
+  165                  | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 412
+    RE_String  desplazar e ir al estado 413
+
+
+Estado 305
+
+  162 NT_Parametersmount: NT_Parametersmount SYM_Ampersand NT_Parametermount .
+
+    $default  reduce usando la regla 162 (NT_Parametersmount)
+
+
+Estado 306
+
+  173 NT_Parametermv: RW_Destiny SYM_Arrow . RE_Path
+  174               | RW_Destiny SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 414
+    RE_String  desplazar e ir al estado 415
+
+
+Estado 307
+
+  175 NT_Parametermv: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 416
+
+
+Estado 308
+
+  171 NT_Parametermv: RW_Path SYM_Arrow . RE_Path
+  172               | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 417
+    RE_String  desplazar e ir al estado 418
+
+
+Estado 309
+
+  169 NT_Parametersmv: NT_Parametersmv SYM_Ampersand NT_Parametermv .
+
+    $default  reduce usando la regla 169 (NT_Parametersmv)
+
+
+Estado 310
+
+  177 NT_Recovery: RW_Recovery SYM_Ampersand RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 419
+
+
+Estado 311
+
+  183 NT_Parameterren: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 420
+
+
+Estado 312
+
+  184 NT_Parameterren: RW_Name SYM_Arrow . RE_Name2
+  185                | RW_Name SYM_Arrow . RE_String
+
+    RE_Name2   desplazar e ir al estado 421
+    RE_String  desplazar e ir al estado 422
+
+
+Estado 313
+
+  181 NT_Parameterren: RW_Path SYM_Arrow . RE_Path
+  182                | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 423
+    RE_String  desplazar e ir al estado 424
+
+
+Estado 314
+
+  179 NT_Parametersren: NT_Parametersren SYM_Ampersand NT_Parameterren .
+
+    $default  reduce usando la regla 179 (NT_Parametersren)
+
+
+Estado 315
+
+  193 NT_Parameterrep: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 425
+
+
+Estado 316
+
+  189 NT_Parameterrep: RW_Name SYM_Arrow . RE_Name
+  190                | RW_Name SYM_Arrow . RW_File
+
+    RW_File  desplazar e ir al estado 426
+    RE_Name  desplazar e ir al estado 427
+
+
+Estado 317
+
+  191 NT_Parameterrep: RW_Path SYM_Arrow . RE_Path
+  192                | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 428
+    RE_String  desplazar e ir al estado 429
+
+
+Estado 318
+
+  194 NT_Parameterrep: RW_Ruta SYM_Arrow . RE_Path
+  195                | RW_Ruta SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 430
+    RE_String  desplazar e ir al estado 431
+
+
+Estado 319
+
+  187 NT_Parametersrep: NT_Parametersrep SYM_Ampersand NT_Parameterrep .
+
+    $default  reduce usando la regla 187 (NT_Parametersrep)
+
+
+Estado 320
+
+  201 NT_Parameterrm: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 432
+
+
+Estado 321
+
+  199 NT_Parameterrm: RW_Path SYM_Arrow . RE_Path
+  200               | RW_Path SYM_Arrow . RE_String
+
+    RE_Path    desplazar e ir al estado 433
+    RE_String  desplazar e ir al estado 434
+
+
+Estado 322
+
+  197 NT_Parametersrm: NT_Parametersrm SYM_Ampersand NT_Parameterrm .
+
+    $default  reduce usando la regla 197 (NT_Parametersrm)
+
+
+Estado 323
+
+  203 NT_Rmdisk: RW_Rmdisk SYM_Ampersand RW_Path SYM_Arrow . RE_String
+  204          | RW_Rmdisk SYM_Ampersand RW_Path SYM_Arrow . RE_Path
+
+    RE_Path    desplazar e ir al estado 435
+    RE_String  desplazar e ir al estado 436
+
+
+Estado 324
+
+  210 NT_Parameterrmgrp: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 437
+
+
+Estado 325
+
+  208 NT_Parameterrmgrp: RW_Name SYM_Arrow . RE_Id
+  209                  | RW_Name SYM_Arrow . RE_String
+
+    RE_Id      desplazar e ir al estado 438
+    RE_String  desplazar e ir al estado 439
+
+
+Estado 326
+
+  206 NT_Parametersrmgrp: NT_Parametersrmgrp SYM_Ampersand NT_Parameterrmgrp .
+
+    $default  reduce usando la regla 206 (NT_Parametersrmgrp)
+
+
+Estado 327
+
+  216 NT_Parameterrmusr: RW_Id SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 440
+
+
+Estado 328
+
+  214 NT_Parameterrmusr: RW_Usr SYM_Arrow . RE_Id
+  215                  | RW_Usr SYM_Arrow . RE_String
+
+    RE_Id      desplazar e ir al estado 441
+    RE_String  desplazar e ir al estado 442
+
+
+Estado 329
+
+  212 NT_Parametersrmusr: NT_Parametersrmusr SYM_Ampersand NT_Parameterrmusr .
+
+    $default  reduce usando la regla 212 (NT_Parametersrmusr)
+
+
+Estado 330
+
+  220 NT_Parameterunmount: RW_Idn SYM_Arrow . RE_Id
+
+    RE_Id  desplazar e ir al estado 443
+
+
+Estado 331
+
+  218 NT_Parametersunmount: NT_Parametersunmount SYM_Ampersand NT_Parameterunmount .
+
+    $default  reduce usando la regla 218 (NT_Parametersunmount)
+
+
+Estado 332
+
+   38 NT_Parametercat: RW_Filen SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 38 (NT_Parametercat)
+
+
+Estado 333
+
+   37 NT_Parametercat: RW_Filen SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 37 (NT_Parametercat)
+
+
+Estado 334
+
+   36 NT_Parametercat: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 36 (NT_Parametercat)
+
+
+Estado 335
+
+   44 NT_Parameterchgrp: RW_Grp SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 44 (NT_Parameterchgrp)
+
+
+Estado 336
+
+   45 NT_Parameterchgrp: RW_Grp SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 45 (NT_Parameterchgrp)
+
+
+Estado 337
+
+   42 NT_Parameterchgrp: RW_Usr SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 42 (NT_Parameterchgrp)
+
+
+Estado 338
+
+   43 NT_Parameterchgrp: RW_Usr SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 43 (NT_Parameterchgrp)
+
+
+Estado 339
+
+   51 NT_Parameterchmod: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 51 (NT_Parameterchmod)
+
+
+Estado 340
+
+   49 NT_Parameterchmod: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 49 (NT_Parameterchmod)
+
+
+Estado 341
+
+   50 NT_Parameterchmod: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 50 (NT_Parameterchmod)
+
+
+Estado 342
+
+   52 NT_Parameterchmod: RW_Ugo SYM_Arrow RE_Number .
+
+    $default  reduce usando la regla 52 (NT_Parameterchmod)
+
+
+Estado 343
+
+   59 NT_Parameterchown: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 59 (NT_Parameterchown)
+
+
+Estado 344
+
+   57 NT_Parameterchown: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 57 (NT_Parameterchown)
+
+
+Estado 345
+
+   58 NT_Parameterchown: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 58 (NT_Parameterchown)
+
+
+Estado 346
+
+   61 NT_Parameterchown: RW_Usr SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 61 (NT_Parameterchown)
+
+
+Estado 347
+
+   62 NT_Parameterchown: RW_Usr SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 62 (NT_Parameterchown)
+
+
+Estado 348
+
+   69 NT_Parametercp: RW_Destiny SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 69 (NT_Parametercp)
+
+
+Estado 349
+
+   70 NT_Parametercp: RW_Destiny SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 70 (NT_Parametercp)
+
+
+Estado 350
+
+   68 NT_Parametercp: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 68 (NT_Parametercp)
+
+
+Estado 351
+
+   66 NT_Parametercp: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 66 (NT_Parametercp)
+
+
+Estado 352
+
+   67 NT_Parametercp: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 67 (NT_Parametercp)
+
+
+Estado 353
+
+   78 NT_Parameteredit: RW_Cont SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 78 (NT_Parameteredit)
+
+
+Estado 354
+
+   76 NT_Parameteredit: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 76 (NT_Parameteredit)
+
+
+Estado 355
+
+   74 NT_Parameteredit: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 74 (NT_Parameteredit)
+
+
+Estado 356
+
+   75 NT_Parameteredit: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 75 (NT_Parameteredit)
+
+
+Estado 357
+
+   77 NT_Parameteredit: RW_Size SYM_Arrow RE_Number .
+
+    $default  reduce usando la regla 77 (NT_Parameteredit)
+
+
+Estado 358
+
+   79 NT_Exec: RW_Exec SYM_Ampersand RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 79 (NT_Exec)
+
+
+Estado 359
+
+   80 NT_Exec: RW_Exec SYM_Ampersand RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 80 (NT_Exec)
+
+
+Estado 360
+
+   95 NT_Parameterfdisk: RW_Add SYM_Arrow SYM_Hyphen . RE_Number
+
+    RE_Number  desplazar e ir al estado 444
+
+
+Estado 361
+
+   94 NT_Parameterfdisk: RW_Add SYM_Arrow RE_Number .
+
+    $default  reduce usando la regla 94 (NT_Parameterfdisk)
+
+
+Estado 362
+
+   91 NT_Parameterfdisk: RW_Delete SYM_Arrow RE_Delete .
+
+    $default  reduce usando la regla 91 (NT_Parameterfdisk)
+
+
+Estado 363
+
+   90 NT_Parameterfdisk: RW_Fit SYM_Arrow RE_Fit .
+
+    $default  reduce usando la regla 90 (NT_Parameterfdisk)
+
+
+Estado 364
+
+   93 NT_Parameterfdisk: RW_Name SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 93 (NT_Parameterfdisk)
+
+
+Estado 365
+
+   92 NT_Parameterfdisk: RW_Name SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 92 (NT_Parameterfdisk)
+
+
+Estado 366
+
+   86 NT_Parameterfdisk: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 86 (NT_Parameterfdisk)
+
+
+Estado 367
+
+   87 NT_Parameterfdisk: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 87 (NT_Parameterfdisk)
+
+
+Estado 368
+
+   84 NT_Parameterfdisk: RW_Size SYM_Arrow RE_Number .
+
+    $default  reduce usando la regla 84 (NT_Parameterfdisk)
+
+
+Estado 369
+
+   89 NT_Parameterfdisk: RW_Type SYM_Arrow RW_P .
+
+    $default  reduce usando la regla 89 (NT_Parameterfdisk)
+
+
+Estado 370
+
+   88 NT_Parameterfdisk: RW_Type SYM_Arrow RE_Type .
+
+    $default  reduce usando la regla 88 (NT_Parameterfdisk)
+
+
+Estado 371
+
+   85 NT_Parameterfdisk: RW_Unit SYM_Arrow RE_Unit .
+
+    $default  reduce usando la regla 85 (NT_Parameterfdisk)
+
+
+Estado 372
+
+  101 NT_Parameterfind: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 101 (NT_Parameterfind)
+
+
+Estado 373
+
+  102 NT_Parameterfind: RW_Name SYM_Arrow RE_Name2 .
+
+    $default  reduce usando la regla 102 (NT_Parameterfind)
+
+
+Estado 374
+
+  103 NT_Parameterfind: RW_Name SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 103 (NT_Parameterfind)
+
+
+Estado 375
+
+   99 NT_Parameterfind: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 99 (NT_Parameterfind)
+
+
+Estado 376
+
+  100 NT_Parameterfind: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 100 (NT_Parameterfind)
+
+
+Estado 377
+
+  112 NT_Parameterlogin: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 112 (NT_Parameterlogin)
+
+
+Estado 378
+
+  109 NT_Parameterlogin: RW_Pwd SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 109 (NT_Parameterlogin)
+
+
+Estado 379
+
+  111 NT_Parameterlogin: RW_Pwd SYM_Arrow RE_Number .
+
+    $default  reduce usando la regla 111 (NT_Parameterlogin)
+
+
+Estado 380
+
+  110 NT_Parameterlogin: RW_Pwd SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 110 (NT_Parameterlogin)
+
+
+Estado 381
+
+  107 NT_Parameterlogin: RW_Usr SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 107 (NT_Parameterlogin)
+
+
+Estado 382
+
+  108 NT_Parameterlogin: RW_Usr SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 108 (NT_Parameterlogin)
+
+
+Estado 383
+
+  114 NT_Loss: RW_Loss SYM_Ampersand RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 114 (NT_Loss)
+
+
+Estado 384
+
+  120 NT_Parametermkdir: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 120 (NT_Parametermkdir)
+
+
+Estado 385
+
+  118 NT_Parametermkdir: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 118 (NT_Parametermkdir)
+
+
+Estado 386
+
+  119 NT_Parametermkdir: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 119 (NT_Parametermkdir)
+
+
+Estado 387
+
+  129 NT_Parametermkdisk: RW_Name SYM_Arrow RE_Name2 .
+
+    $default  reduce usando la regla 129 (NT_Parametermkdisk)
+
+
+Estado 388
+
+  128 NT_Parametermkdisk: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 128 (NT_Parametermkdisk)
+
+
+Estado 389
+
+  127 NT_Parametermkdisk: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 127 (NT_Parametermkdisk)
+
+
+Estado 390
+
+  125 NT_Parametermkdisk: RW_Size SYM_Arrow RE_Number .
+
+    $default  reduce usando la regla 125 (NT_Parametermkdisk)
+
+
+Estado 391
+
+  126 NT_Parametermkdisk: RW_Unit SYM_Arrow RE_Unit .
+
+    $default  reduce usando la regla 126 (NT_Parametermkdisk)
+
+
+Estado 392
+
+  138 NT_Parametermkfile: RW_Cont SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 138 (NT_Parametermkfile)
+
+
+Estado 393
+
+  135 NT_Parametermkfile: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 135 (NT_Parametermkfile)
+
+
+Estado 394
+
+  133 NT_Parametermkfile: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 133 (NT_Parametermkfile)
+
+
+Estado 395
+
+  134 NT_Parametermkfile: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 134 (NT_Parametermkfile)
+
+
+Estado 396
+
+  137 NT_Parametermkfile: RW_Size SYM_Arrow RE_Number .
+
+    $default  reduce usando la regla 137 (NT_Parametermkfile)
+
+
+Estado 397
+
+  142 NT_Parametermkfs: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 142 (NT_Parametermkfs)
+
+
+Estado 398
+
+  143 NT_Parametermkfs: RW_Type SYM_Arrow RE_Delete .
+
+    $default  reduce usando la regla 143 (NT_Parametermkfs)
+
+
+Estado 399
+
+  147 NT_Parametermkgrp: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 147 (NT_Parametermkgrp)
+
+
+Estado 400
+
+  148 NT_Parametermkgrp: RW_Name SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 148 (NT_Parametermkgrp)
+
+
+Estado 401
+
+  149 NT_Parametermkgrp: RW_Name SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 149 (NT_Parametermkgrp)
+
+
+Estado 402
+
+  159 NT_Parametermkusr: RW_Grp SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 159 (NT_Parametermkusr)
+
+
+Estado 403
+
+  160 NT_Parametermkusr: RW_Grp SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 160 (NT_Parametermkusr)
+
+
+Estado 404
+
+  155 NT_Parametermkusr: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 155 (NT_Parametermkusr)
+
+
+Estado 405
+
+  156 NT_Parametermkusr: RW_Pwd SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 156 (NT_Parametermkusr)
+
+
+Estado 406
+
+  158 NT_Parametermkusr: RW_Pwd SYM_Arrow RE_Number .
+
+    $default  reduce usando la regla 158 (NT_Parametermkusr)
+
+
+Estado 407
+
+  157 NT_Parametermkusr: RW_Pwd SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 157 (NT_Parametermkusr)
+
+
+Estado 408
+
+  153 NT_Parametermkusr: RW_Usr SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 153 (NT_Parametermkusr)
+
+
+Estado 409
+
+  154 NT_Parametermkusr: RW_Usr SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 154 (NT_Parametermkusr)
+
+
+Estado 410
+
+  167 NT_Parametermount: RW_Name SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 167 (NT_Parametermount)
+
+
+Estado 411
+
+  166 NT_Parametermount: RW_Name SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 166 (NT_Parametermount)
+
+
+Estado 412
+
+  164 NT_Parametermount: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 164 (NT_Parametermount)
+
+
+Estado 413
+
+  165 NT_Parametermount: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 165 (NT_Parametermount)
+
+
+Estado 414
+
+  173 NT_Parametermv: RW_Destiny SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 173 (NT_Parametermv)
+
+
+Estado 415
+
+  174 NT_Parametermv: RW_Destiny SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 174 (NT_Parametermv)
+
+
+Estado 416
+
+  175 NT_Parametermv: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 175 (NT_Parametermv)
+
+
+Estado 417
+
+  171 NT_Parametermv: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 171 (NT_Parametermv)
+
+
+Estado 418
+
+  172 NT_Parametermv: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 172 (NT_Parametermv)
+
+
+Estado 419
+
+  177 NT_Recovery: RW_Recovery SYM_Ampersand RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 177 (NT_Recovery)
+
+
+Estado 420
+
+  183 NT_Parameterren: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 183 (NT_Parameterren)
+
+
+Estado 421
+
+  184 NT_Parameterren: RW_Name SYM_Arrow RE_Name2 .
+
+    $default  reduce usando la regla 184 (NT_Parameterren)
+
+
+Estado 422
+
+  185 NT_Parameterren: RW_Name SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 185 (NT_Parameterren)
+
+
+Estado 423
+
+  181 NT_Parameterren: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 181 (NT_Parameterren)
+
+
+Estado 424
+
+  182 NT_Parameterren: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 182 (NT_Parameterren)
+
+
+Estado 425
+
+  193 NT_Parameterrep: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 193 (NT_Parameterrep)
+
+
+Estado 426
+
+  190 NT_Parameterrep: RW_Name SYM_Arrow RW_File .
+
+    $default  reduce usando la regla 190 (NT_Parameterrep)
+
+
+Estado 427
+
+  189 NT_Parameterrep: RW_Name SYM_Arrow RE_Name .
+
+    $default  reduce usando la regla 189 (NT_Parameterrep)
+
+
+Estado 428
+
+  191 NT_Parameterrep: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 191 (NT_Parameterrep)
+
+
+Estado 429
+
+  192 NT_Parameterrep: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 192 (NT_Parameterrep)
+
+
+Estado 430
+
+  194 NT_Parameterrep: RW_Ruta SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 194 (NT_Parameterrep)
+
+
+Estado 431
+
+  195 NT_Parameterrep: RW_Ruta SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 195 (NT_Parameterrep)
+
+
+Estado 432
+
+  201 NT_Parameterrm: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 201 (NT_Parameterrm)
+
+
+Estado 433
+
+  199 NT_Parameterrm: RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 199 (NT_Parameterrm)
+
+
+Estado 434
+
+  200 NT_Parameterrm: RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 200 (NT_Parameterrm)
+
+
+Estado 435
+
+  204 NT_Rmdisk: RW_Rmdisk SYM_Ampersand RW_Path SYM_Arrow RE_Path .
+
+    $default  reduce usando la regla 204 (NT_Rmdisk)
+
+
+Estado 436
+
+  203 NT_Rmdisk: RW_Rmdisk SYM_Ampersand RW_Path SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 203 (NT_Rmdisk)
+
+
+Estado 437
+
+  210 NT_Parameterrmgrp: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 210 (NT_Parameterrmgrp)
+
+
+Estado 438
+
+  208 NT_Parameterrmgrp: RW_Name SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 208 (NT_Parameterrmgrp)
+
+
+Estado 439
+
+  209 NT_Parameterrmgrp: RW_Name SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 209 (NT_Parameterrmgrp)
+
+
+Estado 440
+
+  216 NT_Parameterrmusr: RW_Id SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 216 (NT_Parameterrmusr)
+
+
+Estado 441
+
+  214 NT_Parameterrmusr: RW_Usr SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 214 (NT_Parameterrmusr)
+
+
+Estado 442
+
+  215 NT_Parameterrmusr: RW_Usr SYM_Arrow RE_String .
+
+    $default  reduce usando la regla 215 (NT_Parameterrmusr)
+
+
+Estado 443
+
+  220 NT_Parameterunmount: RW_Idn SYM_Arrow RE_Id .
+
+    $default  reduce usando la regla 220 (NT_Parameterunmount)
+
+
+Estado 444
+
+   95 NT_Parameterfdisk: RW_Add SYM_Arrow SYM_Hyphen RE_Number .
+
+    $default  reduce usando la regla 95 (NT_Parameterfdisk)
