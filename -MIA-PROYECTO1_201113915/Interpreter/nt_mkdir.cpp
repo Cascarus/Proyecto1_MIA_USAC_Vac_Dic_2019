@@ -31,19 +31,36 @@ void NT_Mkdir::execute(QString id, QString path, bool p, QString command)
     if(id!="" && path!=""){
         Procedures::writeLine("llego a execute NT_Mkdir");
 
-        switch (Procedures::crearCarpetaNueva(id,path,p)) {
-        case EXISTE:
-            Procedures::writeError("No se logro crear carpeta porque ya existe.");
-            break;
-        case EXITO:
-            Procedures::writeLine("Se creo carpeta con éxito.");
-            break;
-        case FALLO:
-            Procedures::writeError("No se logro crear la carpeta porque faltan carpetas padre");
-            break;
-        default:
-            break;
+        USER userlogin = Procedures::getUserLogin();
+        if(userlogin.name!="" && userlogin.id!=""){
+            if(userlogin.id == id.toUpper()){
+                switch (Procedures::crearCarpetaNueva(id, path, p)) {
+                case EXISTE:
+                    Procedures::writeError("No se logro crear carpeta porque ya existe.");
+                    break;
+                case EXITO:
+                    Procedures::writeLine("Se creo carpeta con éxito.");
+                    break;
+                case FALLO:
+                    Procedures::writeError("No se logro crear la carpeta porque faltan carpetas padre");
+                    break;
+                case SIN_PERMISOS_LECTURA:
+                    Procedures::writeError("No se logro crear la carpeta porque no tienen permisos de lectura");
+                    break;
+                case SIN_PERMISOS_ESCRITURA:
+                    Procedures::writeError("No se logro crear la carpeta porque no tienen permisos de escritura.");
+                    break;
+                default:
+                    break;
+                }
+            }else{
+                Procedures::writeError("Partición a modificar no corresponde al usuario logeado.");
+            }
+
+        }else{
+            Procedures::writeError("No se a iniciado sesión.");
         }
+
     }
     else{
         if(id=="")

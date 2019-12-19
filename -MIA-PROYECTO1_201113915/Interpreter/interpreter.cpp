@@ -17,7 +17,7 @@ void Interpreter::tourAST(NodeAST *root)
             tourAST(&node);
         }
     }
-    break;
+        break;
 
     case NTCAT:      { NodeAST node = root->childs.at(0); cat->tourAST(&node, root->command);      } break;
     case NTCHGRP:    { NodeAST node = root->childs.at(0); chgrp->tourAST(&node, root->command);    } break;

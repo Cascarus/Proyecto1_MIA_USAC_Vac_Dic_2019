@@ -35,11 +35,36 @@ void NT_Mkfile::execute(QString id, QString path, bool p, int size, QString cont
     Procedures::writeCommand(command);
     if(id!="" && path!=""){
         Procedures::writeLine("llego a execute NT_Mkfile");
-    }
-    else{
-        if(id=="")
-            Procedures::writeError("Falta el parametro &id");
-        if(path=="")
-            Procedures::writeError("Falta el parametro &path");
+
+        USER userlogin = Procedures::getUserLogin();
+        if(userlogin.name!="" && userlogin.id!=""){
+            if(userlogin.id == id.toUpper()){
+                switch (Procedures::crearArchivoNuevo(id,path,p,size,cont)) {
+                case EXISTE:
+                    Procedures::writeError("No se logro crear el archivo porque ya existe.");
+                    break;
+                case EXITO:
+                    Procedures::writeLine("Se creo "+ path +" con éxito.");
+                    break;
+                case FALLO:
+                    Procedures::writeError("No se logro crear el archivo porque faltan carpetas padre");
+                    break;
+                case SIN_PERMISOS_LECTURA:
+                    Procedures::writeError("No se logro crear el archivo porque no tienen permisos de lectura");
+                    break;
+                case SIN_PERMISOS_ESCRITURA:
+                    Procedures::writeError("No se logro crear el archivo porque no tienen permisos de escritura.");
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+        else{
+            if(id=="")
+                Procedures::writeError("Falta el parametro &id");
+            if(path=="")
+                Procedures::writeError("Falta el parametro &path");
+        }
     }
 }

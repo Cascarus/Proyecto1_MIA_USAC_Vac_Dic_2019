@@ -30,6 +30,10 @@ void NT_Login::execute(QString usr, QString pwd, QString id, QString command)
     Procedures::writeCommand(command);
     if(id!="" && usr!="" && pwd!=""){
         Procedures::writeLine("llego a execute NT_Login");
+        if(Procedures::inicioSesion(usr,pwd,id))
+            Procedures::writeLine("Se inicio correctamente la sesión");
+        else
+            Procedures::writeError("No se inicio sesión usuario o contraseña incorrectos.");
     }
     else{
         if(usr=="")

@@ -28,6 +28,7 @@ void NT_Cat::execute(QString id, QStringList archive, QString command)
     Procedures::writeCommand(command);
     if(id != "" && !archive.isEmpty()){
         Procedures::writeLine("llego a execute NT_Cat");
+        Procedures::mostrarContenido(id,archive);
     }
     else{
         if(id=="")

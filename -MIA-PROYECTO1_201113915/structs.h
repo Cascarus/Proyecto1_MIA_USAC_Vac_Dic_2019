@@ -47,8 +47,6 @@ typedef struct MOUNTEDPARTITION
     char        hd[16];
 }MOUNTEDPARTITION;
 
-
-
 typedef struct SUPERBOOT
 {
     char        sb_nombre_hd[16];
@@ -91,6 +89,7 @@ typedef struct AVD
     int         avd_ap_detalle_directorio;
     int         avd_ap_arbol_virtual_directorio;
     int         avd_proper;
+    int         avd_perm;
 }AVD;
 
 typedef struct BLOCK_FILE
@@ -119,7 +118,8 @@ typedef struct INODO
     int         i_count_bloques_asignados;
     int         i_array_bloques[4];
     int         i_ap_indirecto;
-    int         I_id_proper;
+    int         i_id_proper;
+    int         i_perm;
 }INODO;
 
 typedef struct BITACORA{
@@ -129,6 +129,33 @@ typedef struct BITACORA{
     char        log_contenido[256];
     time_t      log_fecha;
 }BITACORA;
+
+typedef struct USER{
+    int usr;
+    int grp;
+    QString namegrp;
+    QString name;
+    QString pwd;
+    QString id;
+}USER;
+
+typedef struct GROUP{
+    int grp;
+    QString name;
+}GROUP;
+
+
+typedef struct PERMISO{
+    bool lectura;
+    bool escritura;
+    bool ejecucion;
+}PERMISO;
+
+typedef struct PERMISOS{
+    PERMISO user;
+    PERMISO group;
+    PERMISO other;
+}PERMISOS;
 
 enum Choice
 {
@@ -190,11 +217,25 @@ enum RETURN
 {
     FALLO = 0,
     EXITO = 1,
-    EXISTE =2
+    EXISTE = 2,
+    SIN_PERMISOS_LECTURA = 3,
+    SIN_PERMISOS_ESCRITURA = 4
 };
 
-enum JOURNALACTION {
+enum LOG_OPERATION {
     ACTIONNULL = 0,
+    ACTIONCREATE = 1,
+    ACTIONRENAME = 2,
+    ACTIONREMOVE = 3,
+    ACTIONMOVE = 4,
+    ACTIONCOPY = 5,
+    ACTIONCAT = 6,
+    ACTIONEDIT = 7
+};
+
+enum LOG_TIPO {
+    LOG_ARCHIVO = 0,
+    LOG_CARPETA = 1
 };
 
 #endif // STRUCTS_H

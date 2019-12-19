@@ -30,6 +30,11 @@ void NT_Rmgrp::execute(QString id, QString name, QString command)
     Procedures::writeCommand(command);
     if(id!="" && name!=""){
         Procedures::writeLine("llego a execute NT_Rmgrp");
+        if(Procedures::removerGrupo(name,id))
+            Procedures::writeLine("Se elimino el grupo y sus usuarios.");
+        else
+            Procedures::writeError("No se elimino el grupo ya que no existe.");
+
     }
     else{
         if(id=="")

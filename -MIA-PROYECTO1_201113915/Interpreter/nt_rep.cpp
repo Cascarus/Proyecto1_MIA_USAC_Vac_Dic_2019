@@ -61,7 +61,7 @@ void NT_Rep::execute(QString path, QString name, QString id, QString ruta, QStri
         else if(name.toUpper()=="LS")
             Procedures::generateRepLs(path,id,ruta);
         else
-           Procedures::writeError("No existe tipo de reporte");
+            Procedures::writeError("No existe tipo de reporte");
     }
     else{
         if(id=="")

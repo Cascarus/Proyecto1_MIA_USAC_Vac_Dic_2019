@@ -10,13 +10,13 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    //Procedures::writeLine("SUPER BOOT:  "+QString::number(sizeof (SUPERBOOT)));
-    //Procedures::writeLine("AVD:         "+QString::number(sizeof (AVD)));
-    //Procedures::writeLine("DD:          "+QString::number(sizeof (DD)));
-    //Procedures::writeLine("INODO:       "+QString::number(sizeof (INODO)));
-    //Procedures::writeLine("BLOCK:       "+QString::number(sizeof (BLOCK_DATA)));
-    //Procedures::writeLine("BITACORA:    "+QString::number(sizeof (BITACORA)));
-    //Procedures::writeLine("N:           "+QString::number(Procedures::getN(10240)));
+    Procedures::writeLine("SUPER BOOT:  "+QString::number(sizeof (SUPERBOOT)));
+    Procedures::writeLine("AVD:         "+QString::number(sizeof (AVD)));
+    Procedures::writeLine("DD:          "+QString::number(sizeof (DD)));
+    Procedures::writeLine("INODO:       "+QString::number(sizeof (INODO)));
+    Procedures::writeLine("BLOCK:       "+QString::number(sizeof (BLOCK_DATA)));
+    Procedures::writeLine("BITACORA:    "+QString::number(sizeof (BITACORA)));
+    Procedures::writeLine("N:           "+QString::number(Procedures::getN(10485760)));
 
     QString entrada;
 
@@ -26,14 +26,6 @@ int main(int argc, char *argv[])
     extern int column; // Columna de los tokens
     extern int yylineno;
 
-
-    char* prueba = new char[102];
-
-
-    for(int i=0; i<102;i++)
-        prueba[i] = '0';
-
-    //Procedures::getRepBM("Prueba", prueba,102);
 
     do
     {

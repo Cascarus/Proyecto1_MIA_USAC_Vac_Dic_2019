@@ -32,6 +32,10 @@ void NT_Mkusr::execute(QString id, QString usr, QString pwd, QString grp, QStrin
     Procedures::writeCommand(command);
     if(id!="" && usr!="" && pwd!="" && grp!=""){
         Procedures::writeLine("llego a execute NT_Mkusr");
+        if(Procedures::crearUsuario(usr, pwd, grp, id))
+            Procedures::writeLine("Se creo el usuario exitosamente");
+        else
+            Procedures::writeError("No se creo el usuario porque ya existe.");
     }
     else{
         if(id=="")

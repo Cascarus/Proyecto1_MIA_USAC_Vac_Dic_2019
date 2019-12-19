@@ -30,6 +30,10 @@ void NT_Rmusr::execute(QString id, QString usr, QString command)
     Procedures::writeCommand(command);
     if(id!="" && usr!=""){
         Procedures::writeLine("llego a execute NT_Rmusr");
+        if(Procedures::removerUsuario(usr,id))
+            Procedures::writeLine("Se elimino el usuario.");
+        else
+            Procedures::writeError("No se elimino el usuario ya que no existe.");
     }
     else{
         if(id=="")

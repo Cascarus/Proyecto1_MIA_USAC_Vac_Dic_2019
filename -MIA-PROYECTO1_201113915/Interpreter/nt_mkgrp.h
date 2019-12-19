@@ -8,7 +8,7 @@ class NT_Mkgrp
 public:
     NT_Mkgrp();
     void tourAST(NodeAST *node, QString command);
-    void execute(QString name, QString command);
+    void execute(QString name, QString id, QString command);
 
     bool ERROR;
 

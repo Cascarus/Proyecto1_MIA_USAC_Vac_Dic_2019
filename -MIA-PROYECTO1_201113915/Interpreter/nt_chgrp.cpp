@@ -29,6 +29,10 @@ void NT_Chgrp::execute(QString usr, QString grp, QString command)
     Procedures::writeCommand(command);
     if(usr!="" && grp!=""){
         Procedures::writeLine("llego a execute NT_Chgrp");
+        if(Procedures::cambiarGrupo(usr,grp))
+            Procedures::writeLine("Se cambio el grupo del usuario.");
+        else
+            Procedures::writeError("No se logro cambiar el grupo");
     }
     else{
         if(usr=="")

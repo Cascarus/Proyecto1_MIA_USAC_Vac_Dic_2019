@@ -7,11 +7,67 @@
 
 using namespace std;
 
-static int noCommand = 0;
+
+static int noCommand;
 static QStringList disk;
 static QStringList letters;
 static QList<int> counts;
 static QStringList mounts;
+static USER userlogin;
+static QList<USER> users;
+static QList<GROUP> grps;
+
+PERMISOS Procedures::getPermisos(int perm){
+
+
+    int userPerm = perm / 100;
+    int groupPerm = (perm - userPerm*100) /10;
+    int otherPerm = perm - userPerm*100 - groupPerm*10;
+
+    PERMISOS permisos;
+
+    permisos.user.ejecucion = userPerm%2;
+    permisos.user.escritura = static_cast<int>(userPerm/2)%2;
+    permisos.user.lectura = static_cast<int>(static_cast<int>(userPerm/2)/2)%2;
+
+    permisos.group.ejecucion = groupPerm%2;
+    permisos.group.escritura = static_cast<int>(groupPerm/2)%2;
+    permisos.group.lectura = static_cast<int>(static_cast<int>(groupPerm/2)/2)%2;
+
+    permisos.other.ejecucion = otherPerm%2;
+    permisos.other.escritura = static_cast<int>(otherPerm/2)%2;
+    permisos.other.lectura = static_cast<int>(static_cast<int>(otherPerm/2)/2)%2;
+
+    return permisos;
+}
+USER Procedures::getUser(int id){
+    USER nulo = createUser(-1,-1,"","","","");
+    for (int i=0; i<users.length(); i++)
+        if(users[i].usr==id)
+            return users[i];
+
+    return nulo;
+}
+bool Procedures::getPermisoLectura(int userProper, int user, PERMISOS perm){
+    if(userProper == user)
+        return perm.user.lectura;
+    else if (getUser(user).grp==getUser(userProper).grp)
+        return perm.group.lectura;
+    else
+        return perm.other.lectura;
+}
+bool Procedures::getPermisoEscritura(int userProper, int user, PERMISOS perm){
+    if(userProper == user)
+        return perm.user.escritura;
+    else if (getUser(user).grp==getUser(userProper).grp)
+        return perm.group.escritura;
+    else
+        return perm.other.escritura;
+}
+
+USER Procedures::getUserLogin(){
+    return userlogin;
+}
 
 void Procedures::clearProcedures()
 {
@@ -212,6 +268,413 @@ EBR Procedures::getEBR(QString path,int pos){
         file.read(reinterpret_cast<char*>(&retorno),sizeof(EBR));
         file.close();
     }
+    return retorno;
+}
+
+QString Procedures::createBitMap(int n){
+    QString bitmap = "";
+    for (int i=0; i<n;i++)
+        bitmap.append('0');
+
+    return bitmap;
+}
+void Procedures::setBitMap(QString path, QString bitmap, int pos)
+{
+
+    char caracter = ' ';
+    ifstream exist(path.toUtf8(),ios::in);
+
+    if(exist.good())
+    {
+        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
+
+        writeLine("Insertando el BITMAP espere...");
+
+
+
+        for (int i=0;i<bitmap.length();i++){
+            file.seekp(pos+i);
+            caracter = bitmap[i].toLatin1();
+            int size = sizeof (caracter);
+            file.write(reinterpret_cast<char*>(&caracter), sizeof (caracter));
+        }
+        file.close();
+        exist.close();
+        writeLine("se inserto el BITMAP con éxito");
+    }
+    else
+        writeError("Disco no existe en la ubicación");
+}
+QString Procedures::getBitMap(QString path, int n, int pos)
+{
+    QString retorno = "";
+    char caracter=' ';
+
+    ifstream file(path.toUtf8());
+    if(file.is_open())
+    {
+
+
+        for (int i=0;i<n;i++) {
+            file.seekg(pos+i,ios::beg);
+            file.read(reinterpret_cast<char*>(&caracter), sizeof(caracter));
+            retorno.append(caracter);
+        }
+
+        file.close();
+    }
+
+    return retorno;
+}
+int Procedures::getFirstFreeBM(QString bitmap){
+    for (int i=0; i<bitmap.length(); i++)
+        if(bitmap[i]=='0')
+            return i;
+
+    return -1;
+}
+
+SUPERBOOT Procedures::createSuperBoot(MOUNTEDPARTITION mountedPartition){
+    SUPERBOOT retorno;
+    int n = getN(mountedPartition.part_size);
+
+    strcpy(retorno.sb_nombre_hd,mountedPartition.hd);
+
+    retorno.sb_arbol_virtual_count = n;
+    retorno.sb_detalle_directory_count = n;
+    retorno.sb_inodos_count = 5*n;
+    retorno.sb_bloques_count = 20*n;
+    retorno.sb_arbol_virtual_free = n;
+    retorno.sb_detalle_directory_free = n;
+    retorno.sb_inodos_free = 5*n;
+    retorno.sb_bloques_free = 20*n;
+    retorno.sb_date_creacion = time(nullptr);
+    retorno.sb_date_ultimo_montaje = time(nullptr);
+    retorno.sb_montaje_count = 0;
+    retorno.sb_ap_bitmap_arbol_directorio = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT));
+    retorno.sb_ap_arbol_directory = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n ;
+    retorno.sb_ap_bitmap_detalle_directory = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD));
+    retorno.sb_ap_detalle_directory = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n;
+    retorno.sb_ap_bitmap_table_inodo = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n + n*static_cast<int>(sizeof(DD));
+    retorno.sb_ap_table_inodo = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n + n*static_cast<int>(sizeof(DD)) + 5*n;
+    retorno.sb_ap_bitmap_bloques = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n + n*static_cast<int>(sizeof(DD)) + 5*n + 5*n*static_cast<int>(sizeof(INODO));
+    retorno.sb_ap_bloques = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n + n*static_cast<int>(sizeof(DD)) + 5*n + 5*n*static_cast<int>(sizeof(INODO)) + 20*n;
+    retorno.sb_ap_log = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n + n*static_cast<int>(sizeof(DD)) + 5*n + 5*n*static_cast<int>(sizeof(INODO)) + 20*n + 20*n*static_cast<int>(sizeof(BLOCK_DATA));
+    retorno.size_struct_arbol_directorio = static_cast<int>(sizeof(AVD));
+    retorno.size_struct_detalle_directorio = static_cast<int>(sizeof(DD));
+    retorno.size_struct_inodo = static_cast<int>(sizeof(INODO));
+    retorno.size_struct_bloque = static_cast<int>(sizeof(BLOCK_DATA));
+    retorno.sb_first_free_bit_arbol_directorio = 0;
+    retorno.sb_first_free_bit_detalle_directorio = 0;
+    retorno.sb_first_free_bit_tabla_inodo = 0;
+    retorno.sb_first_free_bit_bloques = 0;
+    retorno.sb_magic_num = 201113915;
+
+    return retorno;
+}
+void Procedures::setSuperBoot(QString path, SUPERBOOT superblock, int pos)
+{
+    ifstream exist(path.toUtf8(),ios::in);
+
+    if(exist.good())
+    {
+        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
+
+        writeLine("Insertando el SUPERBOOT espere...");
+
+        file.seekp(pos);
+        file.write(reinterpret_cast<char*>(&superblock),sizeof(SUPERBOOT));
+
+        file.close();
+
+        exist.close();
+        writeLine("se inserto el SUPERBOOT con éxito");
+    }
+    else
+        writeError("Disco no existe en la ubicación");
+}
+SUPERBOOT Procedures::getSuperBoot(QString path, int pos)
+{
+    SUPERBOOT retorno;
+    ifstream file(path.toUtf8());
+    if(file.is_open())
+    {
+        file.seekg(pos,ios::beg);
+        file.read(reinterpret_cast<char*>(&retorno),sizeof(SUPERBOOT));
+        file.close();
+    }
+    return retorno;
+}
+
+AVD Procedures::createAVD(QString name, int det, int usr,int perm){
+    AVD retorno;
+
+    retorno.avd_fecha_creacion = time(nullptr);
+
+    for (int i=0;i<20;i++)
+        if(i<name.size())
+            retorno.avd_nombre_directorio[i] = name.at(i).toLatin1();
+        else
+            retorno.avd_nombre_directorio[i] = '\0';
+
+    for (int i=0; i<6; i++) {
+        retorno.avd_ap_array_subdirectorios[i] =-1;
+    }
+
+    retorno.avd_ap_detalle_directorio = det;
+    retorno.avd_ap_arbol_virtual_directorio = -1;
+    retorno.avd_proper = usr;
+    retorno.avd_perm = perm;
+
+    return retorno;
+}
+void Procedures::setAVD(QString path, AVD avd, int start, int n)
+{
+    ifstream exist(path.toUtf8(),ios::in);
+
+    if(exist.good())
+    {
+        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
+
+        writeLine("Insertando el AVD espere...");
+
+        file.seekp(start + n*static_cast<int>(sizeof(AVD)));
+        file.write(reinterpret_cast<char*>(&avd),sizeof(AVD));
+
+        file.close();
+
+        exist.close();
+        writeLine("se inserto el AVD con éxito");
+    }
+    else
+        writeError("Disco no existe en la ubicación");
+}
+AVD Procedures::getAVD(QString path, int start, int n)
+{
+    AVD retorno;
+    ifstream file(path.toUtf8());
+    if(file.is_open())
+    {
+        file.seekg(start + n*static_cast<int>(sizeof(AVD)),ios::beg);
+        file.read(reinterpret_cast<char*>(&retorno),sizeof(AVD));
+        file.close();
+    }
+    return retorno;
+}
+
+BLOCK_FILE Procedures::createBlockFile(QString name, int ap_inodo){
+    BLOCK_FILE retorno;
+
+    for (int i=0;i<20;i++)
+        if(i<name.size())
+            retorno.dd_file_nombre[i] = name.at(i).toLatin1();
+        else
+            retorno.dd_file_nombre[i] = '\0';
+
+    retorno.dd_file_ap_inodo = ap_inodo;
+
+    retorno.dd_file_date_creation = time(nullptr);
+    retorno.dd_file_date_modificacion = time(nullptr);
+
+    return retorno;
+}
+
+DD Procedures::createDD(){
+    DD retorno;
+
+    for (int i=0; i<5;i++)
+        retorno.dd_array_files[i] = createBlockFile("",-1);
+
+    retorno.dd_ap_detalle_directorio = -1;
+
+    return retorno;
+}
+void Procedures::setDD(QString path, DD dd, int start, int n)
+{
+    ifstream exist(path.toUtf8(),ios::in);
+
+    if(exist.good())
+    {
+        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
+
+        writeLine("Insertando el DD espere...");
+
+        file.seekp(start + n*static_cast<int>(sizeof(DD)));
+        file.write(reinterpret_cast<char*>(&dd),sizeof(DD));
+
+        file.close();
+
+        exist.close();
+        writeLine("se inserto el DD con éxito");
+    }
+    else
+        writeError("Disco no existe en la ubicación");
+}
+DD Procedures::getDD(QString path, int start, int n)
+{
+    DD retorno;
+    ifstream file(path.toUtf8());
+    if(file.is_open())
+    {
+        file.seekg(start + n*static_cast<int>(sizeof(DD)),ios::beg);
+        file.read(reinterpret_cast<char*>(&retorno),sizeof(DD));
+        file.close();
+    }
+    return retorno;
+}
+
+INODO Procedures::createInodo(int inodo, int size, int proper, int perm){
+    INODO retorno;
+
+    retorno.i_count_inodo = inodo;
+    retorno.i_size_archivo = size;
+    retorno.i_count_bloques_asignados = 0;
+
+    for (int i=0; i<4; i++)
+        retorno.i_array_bloques[i]=-1;
+
+    retorno.i_ap_indirecto = -1;
+    retorno.i_id_proper = proper;
+    retorno.i_perm = perm;
+
+    return retorno;
+}
+void Procedures::setInodo(QString path, INODO inodo, int start, int n)
+{
+    ifstream exist(path.toUtf8(),ios::in);
+
+    if(exist.good())
+    {
+        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
+
+        writeLine("Insertando el INODO espere...");
+
+        file.seekp(start + n*static_cast<int>(sizeof(INODO)));
+        file.write(reinterpret_cast<char*>(&inodo),sizeof(INODO));
+
+        file.close();
+
+        exist.close();
+        writeLine("se inserto el INODO con éxito");
+    }
+    else
+        writeError("Disco no existe en la ubicación");
+}
+INODO Procedures::getInodo(QString path, int start, int n)
+{
+    INODO retorno;
+    ifstream file(path.toUtf8());
+    if(file.is_open())
+    {
+        file.seekg(start + n*static_cast<int>(sizeof(INODO)),ios::beg);
+        file.read(reinterpret_cast<char*>(&retorno),sizeof(INODO));
+        file.close();
+    }
+    return retorno;
+}
+
+BLOCK_DATA Procedures::createBlockData(QString block){
+    BLOCK_DATA retorno;
+
+    for (int i=0;i<25;i++)
+        if(i<block.size())
+            retorno.bd_data[i] = block.at(i).toLatin1();
+        else
+            retorno.bd_data[i] = '\0';
+
+    return retorno;
+}
+void Procedures::setBlockData(QString path, BLOCK_DATA blockdata, int start, int n)
+{
+    ifstream exist(path.toUtf8(),ios::in);
+
+    if(exist.good())
+    {
+        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
+
+        writeLine("Insertando el BLOCK_DATA espere...");
+
+        file.seekp(start + n*static_cast<int>(sizeof(BLOCK_DATA)));
+        file.write(reinterpret_cast<char*>(&blockdata),sizeof(BLOCK_DATA));
+
+        file.close();
+
+        exist.close();
+        writeLine("se inserto el BLOCK_DATA con éxito");
+    }
+    else
+        writeError("Disco no existe en la ubicación");
+}
+BLOCK_DATA Procedures::getBlockData(QString path, int start, int n)
+{
+    BLOCK_DATA retorno;
+    ifstream file(path.toUtf8());
+    if(file.is_open())
+    {
+        file.seekg(start + n*static_cast<int>(sizeof(BLOCK_DATA)),ios::beg);
+        file.read(reinterpret_cast<char*>(&retorno),sizeof(BLOCK_DATA));
+        file.close();
+    }
+    return retorno;
+}
+
+BITACORA Procedures::createBitacora(MOUNTEDPARTITION mountedPartition){
+    BITACORA retorno;
+
+    return retorno;
+}
+void Procedures::setBitacora(QString path, BITACORA bitacora, int start, int n)
+{
+    ifstream exist(path.toUtf8(),ios::in);
+
+    if(exist.good())
+    {
+        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
+
+        writeLine("Insertando el BITACORA espere...");
+
+        file.seekp(start + n*static_cast<int>(sizeof(BITACORA)));
+        file.write(reinterpret_cast<char*>(&bitacora),sizeof(BITACORA));
+
+        file.close();
+
+        exist.close();
+        writeLine("se inserto el BITACORA con éxito");
+    }
+    else
+        writeError("Disco no existe en la ubicación");
+}
+BITACORA Procedures::getBitacora(QString path, int start, int n)
+{
+    BITACORA retorno;
+    ifstream file(path.toUtf8());
+    if(file.is_open())
+    {
+        file.seekg(start + n*static_cast<int>(sizeof(BITACORA)),ios::beg);
+        file.read(reinterpret_cast<char*>(&retorno),sizeof(BITACORA));
+        file.close();
+    }
+    return retorno;
+}
+
+USER Procedures::createUser(int usr, int grp, QString namegrp, QString nameusr, QString pwd, QString id)
+{
+    USER retorno;
+
+    retorno.usr = usr;
+    retorno.grp = grp;
+    retorno.pwd = pwd;
+    retorno.usr = usr;
+    retorno.name = nameusr;
+    retorno.namegrp = namegrp;
+    retorno.id = id;
+
+    return retorno;
+}
+GROUP Procedures::createGrp(int grp, QString name){
+    GROUP retorno;
+    retorno.grp = grp;
+    retorno.name = name;
     return retorno;
 }
 
@@ -1678,6 +2141,143 @@ void Procedures::writeMountPartition()
         writeLine("        -Path: "+datos.at(0) + " -Name: "+datos.at(1) + " -Id: " + datos.at(2));
     }
 }
+
+QString Procedures::getPathMountedPartition(QString id)
+{
+    for(int i =0;i < mounts.size();i++)
+    {
+        QStringList datos = mounts.at(i).split(',', QString::SkipEmptyParts);
+        if(datos[2]==id)
+        {
+            return datos[0];
+        }
+    }
+    return "";
+}
+MOUNTEDPARTITION Procedures::getMountedPartition(QString id)
+{
+
+    MBR mbr;
+    EBR nulo;
+    nulo.part_fit = '\0';
+    nulo.part_next = 0;
+    nulo.part_size = 0;
+    nulo.part_start = 0;
+    nulo.part_status = '\0';
+
+    MOUNTEDPARTITION retornonulo;
+    retornonulo = toMountedPartition(nulo,"");
+
+    for (int i=0;i<16;i++)
+        nulo.part_name[i]='\0';
+
+    for(int i =0;i < mounts.size();i++)
+    {
+        QStringList datos = mounts.at(i).split(',', QString::SkipEmptyParts);
+        if(datos[2]==id)
+        {
+            mbr = getMBR(datos[0],0);
+
+
+            QStringList directorios = datos[0].split('/', QString::SkipEmptyParts);
+
+            QString hd = directorios.at(directorios.length()-1).split('.', QString::SkipEmptyParts)[0];
+
+            if(QString::fromLatin1(mbr.mbr_partition_1.part_name,sizeof(mbr.mbr_partition_1.part_name)).remove('\000')==datos[1])
+                return toMountedPartition(mbr.mbr_partition_1, hd);
+            else if(QString::fromLatin1(mbr.mbr_partition_2.part_name,sizeof(mbr.mbr_partition_2.part_name)).remove('\000')==datos[1])
+                return toMountedPartition(mbr.mbr_partition_2, hd);
+            else if(QString::fromLatin1(mbr.mbr_partition_3.part_name,sizeof(mbr.mbr_partition_3.part_name)).remove('\000')==datos[1])
+                return toMountedPartition(mbr.mbr_partition_3, hd);
+            else if(QString::fromLatin1(mbr.mbr_partition_4.part_name,sizeof(mbr.mbr_partition_4.part_name)).remove('\000')==datos[1])
+                return toMountedPartition(mbr.mbr_partition_4, hd);
+
+            int inicio = -1;
+            int fin = -1;
+
+            EBR tmp = nulo;
+
+            if(mbr.mbr_partition_1.part_status=='1' && mbr.mbr_partition_1.part_type=='E')
+            {
+                inicio = mbr.mbr_partition_1.part_start;
+                fin = mbr.mbr_partition_1.part_start + mbr.mbr_partition_1.part_size;
+            }
+            if(mbr.mbr_partition_2.part_status=='1' && mbr.mbr_partition_2.part_type=='E')
+            {
+                inicio = mbr.mbr_partition_2.part_start;
+                fin = mbr.mbr_partition_2.part_start + mbr.mbr_partition_2.part_size;
+            }
+            if(mbr.mbr_partition_3.part_status=='1' && mbr.mbr_partition_3.part_type=='E')
+            {
+                inicio = mbr.mbr_partition_3.part_start;
+                fin = mbr.mbr_partition_3.part_start + mbr.mbr_partition_3.part_size;
+            }
+            if(mbr.mbr_partition_4.part_status=='1' && mbr.mbr_partition_4.part_type=='E')
+            {
+                inicio = mbr.mbr_partition_4.part_start;
+                fin = mbr.mbr_partition_4.part_start + mbr.mbr_partition_4.part_size;
+            }
+
+            if(inicio!=-1)
+            {
+                int pos= inicio;
+                tmp = getEBR(datos.at(0).toUtf8(),pos);
+                if( tmp.part_status != '\0')
+                {
+                    do
+                    {
+                        if(QString::fromLatin1(tmp.part_name,sizeof(tmp.part_name)).remove('\000') ==  datos[1])
+                        {
+                            return toMountedPartition(tmp, hd);
+                        }
+                        pos = tmp.part_next;
+                        tmp = nulo;
+                        if(pos!=-1)
+                            tmp = getEBR(datos.at(0).toUtf8(),pos);
+                    }
+                    while(tmp.part_status != '\0');
+                }
+            }
+        }
+    }
+    return retornonulo;
+}
+MOUNTEDPARTITION Procedures::toMountedPartition(PARTITION partition, QString hd)
+{
+    MOUNTEDPARTITION retorno;
+
+    for (int i=0;i<16;i++)
+        if(i<hd.size())
+            retorno.hd[i]= hd.at(i).toLatin1();
+        else
+            retorno.hd[i] = '\0';
+
+    retorno.part_fit = partition.part_fit;
+    retorno.part_size = partition.part_size;
+    retorno.part_type = partition.part_type;
+    retorno.part_start = partition.part_start;
+    retorno.part_status = partition.part_status;
+
+    return retorno;
+}
+MOUNTEDPARTITION Procedures::toMountedPartition(EBR ebr, QString hd){
+    MOUNTEDPARTITION retorno;
+
+    for (int i=0;i<16;i++)
+        if(i<hd.size())
+            retorno.hd[i]= hd.at(i).toLatin1();
+        else
+            retorno.hd[i] = '\0';
+
+    retorno.part_fit = ebr.part_fit;
+    retorno.part_size = ebr.part_size - static_cast<int>(sizeof(EBR));
+    retorno.part_type = 'L';
+    retorno.part_start = ebr.part_start  + static_cast<int>(sizeof(EBR));
+    retorno.part_status = ebr.part_status;
+
+    return retorno;
+}
+
 QString Procedures::getId(QString path)
 {
     letters.clear();
@@ -1701,6 +2301,191 @@ QString Procedures::getId(QString path)
     return "";
 }
 
+//Generar QString para .dot
+QString Procedures::getDotBitMap(QString titulo, QString bitmap){
+
+    int espacios = 20 - ( bitmap.length() % 20);
+
+    QString grapho="digraph structs {\n";
+    grapho += "    bitmap [\n";
+    grapho += "        shape = none;\n";
+    grapho += "        label = <\n";
+    grapho += "            <table border=\"0\" cellborder=\"2\" cellspacing=\"2\" color=\"cyan4\">\n";
+    grapho += "                <tr><td colspan=\"20\">"+titulo+"</td></tr>\n";
+    grapho += "                <tr>";
+
+    for (int i=0;i<bitmap.length();i++){
+        if((i+1)%20==0){
+            grapho += "<td>"+bitmap[i]+"</td></tr>\n";
+            grapho += "                <tr>";
+        }
+        else{
+            grapho += "<td>"+bitmap[i]+"</td>";
+        }
+
+        if(i==bitmap.length()-1){
+
+            for (int i=0;i<espacios;i++)
+                grapho += "<td> </td>  ";
+
+            grapho += "</tr>\n";
+        }
+    }
+
+    grapho += "            </table>\n";
+    grapho += "        >\n";
+    grapho += "    ];\n";
+    grapho += "}\n";
+
+
+    return grapho;
+}
+QString Procedures::getDotAVD(QString path, AVD root, int inicioAVD, int n, QString color){
+
+    QString grapho="";
+
+    grapho += "    AVD"+QString::number(n)+" [\n";
+    grapho += "        shape = none;\n";
+    grapho += "        label = <\n";
+    grapho += "            <table border=\"0\" cellborder=\"2\" cellspacing=\"2\" color=\"cyan4\">\n";
+    grapho += "                <tr><td colspan=\"8\" bgcolor=\""+color+"\" >"+QString::fromLatin1(root.avd_nombre_directorio).remove('\000')+"</td></tr>\n";
+    grapho += "                <tr>\n";
+
+    if(root.avd_ap_array_subdirectorios[0]!=-1)
+        grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[0])+"</td>\n";
+    else
+        grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
+
+    if(root.avd_ap_array_subdirectorios[1]!=-1)
+        grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[1])+"</td>\n";
+    else
+        grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
+
+    if(root.avd_ap_array_subdirectorios[2]!=-1)
+        grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[2])+"</td>\n";
+    else
+        grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
+
+    if(root.avd_ap_array_subdirectorios[3]!=-1)
+        grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[3])+"</td>\n";
+    else
+        grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
+
+    if(root.avd_ap_array_subdirectorios[4]!=-1)
+        grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[4])+"</td>\n";
+    else
+        grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
+
+    if(root.avd_ap_array_subdirectorios[5]!=-1)
+        grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[5])+"</td>\n";
+    else
+        grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
+
+    if(root.avd_ap_detalle_directorio!=-1)
+        grapho += "                    <td bgcolor = \"cyan3\">"+QString::number(root.avd_ap_detalle_directorio)+"</td>\n";
+    else
+        grapho += "                    <td bgcolor = \"cyan3\"> &nbsp; </td>\n";
+
+    if(root.avd_ap_arbol_virtual_directorio!=-1)
+        grapho += "                    <td bgcolor = \"greenyellow\">"+QString::number(root.avd_ap_arbol_virtual_directorio)+"</td>\n";
+    else
+        grapho += "                    <td bgcolor = \"greenyellow\"> &nbsp; </td>\n";
+
+    grapho += "                </tr>\n";
+    grapho += "            </table>\n";
+    grapho += "        >\n";
+    grapho += "    ];\n\n";
+
+    for (int i=0; i<6;i++)
+        if(root.avd_ap_array_subdirectorios[i]!=-1){
+
+            grapho += "AVD"+QString::number(n)+"->AVD"+QString::number(root.avd_ap_array_subdirectorios[i])+";\n";
+            AVD directo = getAVD(path, inicioAVD, root.avd_ap_array_subdirectorios[i]);
+
+            grapho += getDotAVD(path, directo, inicioAVD, root.avd_ap_array_subdirectorios[i],"white");
+        }
+
+    if(root.avd_ap_arbol_virtual_directorio!=-1){
+        grapho += "AVD"+QString::number(n)+"->AVD"+QString::number(root.avd_ap_arbol_virtual_directorio)+";\n";
+        AVD indirecto = getAVD(path, inicioAVD, root.avd_ap_arbol_virtual_directorio);
+
+        grapho += getDotAVD(path, indirecto, inicioAVD, root.avd_ap_arbol_virtual_directorio, "lawngreen");
+    }
+
+    return grapho;
+}
+QString Procedures::getDotAVD2(QString path, AVD root, int inicioAVD, int n){
+
+    QString grapho="";
+
+    grapho += "AVD"+QString::number(n)+" [shape=record fillcolor=ivory label=\"";
+    grapho += "{";
+    grapho += QString::fromLatin1(root.avd_nombre_directorio).remove('\000')+"|";
+    grapho += "{";
+
+    if(root.avd_ap_array_subdirectorios[0]!=-1)
+        grapho += "<ap0>"+QString::number(root.avd_ap_array_subdirectorios[0])+"|";
+    else
+        grapho += " |";
+
+    if(root.avd_ap_array_subdirectorios[1]!=-1)
+        grapho += "<ap1>"+QString::number(root.avd_ap_array_subdirectorios[1])+"|";
+    else
+        grapho += " |";
+
+    if(root.avd_ap_array_subdirectorios[2]!=-1)
+        grapho += "<ap2>"+QString::number(root.avd_ap_array_subdirectorios[2])+"|";
+    else
+        grapho += " |";
+
+    if(root.avd_ap_array_subdirectorios[3]!=-1)
+        grapho += "<ap3>"+QString::number(root.avd_ap_array_subdirectorios[3])+"|";
+    else
+        grapho += " |";
+
+    if(root.avd_ap_array_subdirectorios[4]!=-1)
+        grapho += "<ap4>"+QString::number(root.avd_ap_array_subdirectorios[4])+"|";
+    else
+        grapho += " |";
+
+    if(root.avd_ap_array_subdirectorios[5]!=-1)
+        grapho += "<ap5>"+QString::number(root.avd_ap_array_subdirectorios[5])+"|";
+    else
+        grapho += " |";
+
+    if(root.avd_ap_detalle_directorio!=-1)
+        grapho += QString::number(root.avd_ap_detalle_directorio)+"|";
+    else
+        grapho += " |";
+
+    if(root.avd_ap_arbol_virtual_directorio!=-1)
+        grapho += "<ap7>"+QString::number(root.avd_ap_arbol_virtual_directorio);
+    else
+        grapho += " ";
+
+    grapho += "}";
+    grapho += "}\"";
+    grapho += "];\n";
+
+    for (int i=0; i<6;i++)
+        if(root.avd_ap_array_subdirectorios[i]!=-1){
+
+            grapho += "AVD"+QString::number(n)+":<ap"+QString::number(i)+">->AVD"+QString::number(root.avd_ap_array_subdirectorios[i])+";\n";
+            AVD directo = getAVD(path, inicioAVD, root.avd_ap_array_subdirectorios[i]);
+
+            grapho += getDotAVD2(path, directo, inicioAVD, root.avd_ap_array_subdirectorios[i]);
+        }
+
+    if(root.avd_ap_arbol_virtual_directorio!=-1){
+        grapho += "AVD"+QString::number(n)+":<ap7>->AVD"+QString::number(root.avd_ap_arbol_virtual_directorio)+";\n";
+        AVD indirecto = getAVD(path, inicioAVD, root.avd_ap_arbol_virtual_directorio);
+
+        grapho += getDotAVD2(path, indirecto, inicioAVD, root.avd_ap_arbol_virtual_directorio);
+    }
+
+    return grapho;
+}
+
 int Procedures::comprobatePNGPDF(QString path)
 {
     QStringList Directorys = path.split('/',QString::SkipEmptyParts);
@@ -1716,7 +2501,6 @@ int Procedures::comprobatePNGPDF(QString path)
     else
         return  0;
 }
-
 void Procedures::generateRep(QString dot, QString path)
 {
     QString strgComand;
@@ -1742,45 +2526,6 @@ void Procedures::generateRep(QString dot, QString path)
         writeError("Formato no admitido por graphviz");
         break;
     }
-}
-
-QString Procedures::getDotBM(QString titulo, char* bitmap){
-
-    int espacios = 20 - (strlen(bitmap) % 20);
-
-    QString grapho="digraph structs {\n";
-    grapho += "    bitmap [\n";
-    grapho += "        shape = none;\n";
-    grapho += "        label = <\n";
-    grapho += "            <table border=\"0\" cellborder=\"2\" cellspacing=\"2\" color=\"cyan4\">\n";
-    grapho += "                <tr><td colspan=\"20\">"+titulo+"</td></tr>\n";
-    grapho += "                <tr>";
-
-    for (int i=0;i<static_cast<int>(strlen(bitmap));i++){
-        if((i+1)%20==0){
-            grapho += "<td>"+QString::number(bitmap[i]-48)+"</td></tr>\n";
-            grapho += "                <tr>";
-        }
-        else{
-            grapho += "<td>"+QString::number(bitmap[i]-48)+"</td>";
-        }
-
-        if(i==static_cast<int>(strlen(bitmap))-1){
-
-            for (int i=0;i<espacios;i++)
-                grapho += "<td> </td>  ";
-
-            grapho += "</tr>\n";
-        }
-    }
-
-    grapho += "            </table>\n";
-    grapho += "        >\n";
-    grapho += "    ];\n";
-    grapho += "}\n";
-
-
-    return grapho;
 }
 
 bool Procedures::generateRepMBR(QString path, QString id)
@@ -2131,13 +2876,13 @@ bool Procedures::generateRepBm_Arbdir(QString path, QString id)
 
     SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
 
-    char* bitmap = getBitMap(pathmountedPartition, sb.sb_arbol_virtual_count, sb.sb_ap_bitmap_arbol_directorio);
+    QString bitmap = getBitMap(pathmountedPartition, sb.sb_arbol_virtual_count, sb.sb_ap_bitmap_arbol_directorio);
 
     QFile qFile("repBM_DIRECTORIO.dot");
     if(qFile.open(QIODevice::WriteOnly))
     {
         QTextStream out(&qFile);
-        out << getDotBM("Bit Map Arbol Directorio",bitmap);
+        out << getDotBitMap("Bit Map Arbol Directorio",bitmap);
         qFile.close();
     }
 
@@ -2154,13 +2899,13 @@ bool Procedures::generateRepBm_Detdir(QString path, QString id)
 
     SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
 
-    char* bitmap = getBitMap(pathmountedPartition, sb.sb_detalle_directory_count, sb.sb_ap_bitmap_detalle_directory);
+    QString bitmap = getBitMap(pathmountedPartition, sb.sb_detalle_directory_count, sb.sb_ap_bitmap_detalle_directory);
 
     QFile qFile("repBM_DETALLE.dot");
     if(qFile.open(QIODevice::WriteOnly))
     {
         QTextStream out(&qFile);
-        out << getDotBM("Bit Map Detalle de Directorio",bitmap);
+        out << getDotBitMap("Bit Map Detalle de Directorio", bitmap);
         qFile.close();
     }
 
@@ -2177,13 +2922,13 @@ bool Procedures::generateRepBm_Inode(QString path, QString id)
 
     SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
 
-    char* bitmap = getBitMap(pathmountedPartition, sb.sb_inodos_count, sb.sb_ap_bitmap_table_inodo);
+    QString bitmap = getBitMap(pathmountedPartition, sb.sb_inodos_count, sb.sb_ap_bitmap_table_inodo);
 
     QFile qFile("repBM_INODO.dot");
     if(qFile.open(QIODevice::WriteOnly))
     {
         QTextStream out(&qFile);
-        out << getDotBM("Bit Map de Inodos",bitmap);
+        out << getDotBitMap("Bit Map de Inodos",bitmap);
         qFile.close();
     }
 
@@ -2200,13 +2945,13 @@ bool Procedures::generateRepBm_Block(QString path, QString id)
 
     SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
 
-    char* bitmap = getBitMap(pathmountedPartition, sb.sb_bloques_count, sb.sb_ap_bitmap_bloques);
+    QString bitmap = getBitMap(pathmountedPartition, sb.sb_bloques_count, sb.sb_ap_bitmap_bloques);
 
     QFile qFile("repBM_BLOCK.dot");
     if(qFile.open(QIODevice::WriteOnly))
     {
         QTextStream out(&qFile);
-        out << getDotBM("Bit Map de bloques",bitmap);
+        out << getDotBitMap("Bit Map de bloques",bitmap);
         qFile.close();
     }
 
@@ -2218,154 +2963,6 @@ bool Procedures::generateRepBitacora(QString path, QString id)
 {
 
 }
-
-QString Procedures::getDotAVD(QString path, AVD root, int inicioAVD, int n){
-
-    QString grapho="";
-
-    grapho += "    AVD"+QString::number(n)+" [\n";
-    grapho += "        shape = none;\n";
-    grapho += "        label = <\n";
-    grapho += "            <table border=\"0\" cellborder=\"2\" cellspacing=\"2\" color=\"cyan4\">\n";
-    grapho += "                <tr><td colspan=\"8\" bgcolor=\"white\" >"+QString::fromLatin1(root.avd_nombre_directorio).remove('\000')+"</td></tr>\n";
-    grapho += "                <tr>\n";
-
-    if(root.avd_ap_array_subdirectorios[0]!=-1)
-    grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[0])+"</td>\n";
-    else
-    grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
-
-    if(root.avd_ap_array_subdirectorios[1]!=-1)
-    grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[1])+"</td>\n";
-    else
-    grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
-
-    if(root.avd_ap_array_subdirectorios[2]!=-1)
-    grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[2])+"</td>\n";
-    else
-    grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
-
-    if(root.avd_ap_array_subdirectorios[3]!=-1)
-    grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[3])+"</td>\n";
-    else
-    grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
-
-    if(root.avd_ap_array_subdirectorios[4]!=-1)
-    grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[4])+"</td>\n";
-    else
-    grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
-
-    if(root.avd_ap_array_subdirectorios[5]!=-1)
-    grapho += "                    <td bgcolor = \"lightskyblue1\">"+QString::number(root.avd_ap_array_subdirectorios[5])+"</td>\n";
-    else
-    grapho += "                    <td bgcolor = \"lightcyan\"> &nbsp; </td>\n";
-
-    if(root.avd_ap_detalle_directorio!=-1)
-    grapho += "                    <td bgcolor = \"cyan3\">"+QString::number(root.avd_ap_detalle_directorio)+"</td>\n";
-    else
-    grapho += "                    <td bgcolor = \"cyan3\"> &nbsp; </td>\n";
-
-    if(root.avd_ap_arbol_virtual_directorio!=-1)
-    grapho += "                    <td bgcolor = \"greenyellow\">"+QString::number(root.avd_ap_arbol_virtual_directorio)+"</td>\n";
-    else
-    grapho += "                    <td bgcolor = \"greenyellow\"> &nbsp; </td>\n";
-
-    grapho += "                </tr>\n";
-    grapho += "            </table>\n";
-    grapho += "        >\n";
-    grapho += "    ];\n\n";
-
-    for (int i=0; i<6;i++)
-        if(root.avd_ap_array_subdirectorios[i]!=-1){
-
-            grapho += "AVD"+QString::number(n)+"->AVD"+QString::number(root.avd_ap_array_subdirectorios[i])+"{label="+QString::number(root.avd_ap_array_subdirectorios[i])+"};\n";
-            AVD directo = getAVD(path, inicioAVD, root.avd_ap_array_subdirectorios[i]);
-
-            grapho += getDotAVD(path, directo, inicioAVD, root.avd_ap_array_subdirectorios[i]);
-        }
-
-    if(root.avd_ap_arbol_virtual_directorio!=-1){
-        grapho += "AVD"+QString::number(n)+"->AVD"+QString::number(root.avd_ap_arbol_virtual_directorio)+"{label="+QString::number(root.avd_ap_arbol_virtual_directorio)+"};\n";
-        AVD indirecto = getAVD(path, inicioAVD, root.avd_ap_arbol_virtual_directorio);
-
-        grapho += getDotAVD(path, indirecto, inicioAVD, root.avd_ap_arbol_virtual_directorio);
-    }
-
-    return grapho;
-}
-
-QString Procedures::getDotAVD2(QString path, AVD root, int inicioAVD, int n){
-
-    QString grapho="";
-
-    grapho += "AVD"+QString::number(n)+" [shape=record fillcolor=ivory label=\"";
-    grapho += "{";
-    grapho += QString::fromLatin1(root.avd_nombre_directorio).remove('\000')+"|";
-    grapho += "{";
-
-    if(root.avd_ap_array_subdirectorios[0]!=-1)
-    grapho += "<ap0>"+QString::number(root.avd_ap_array_subdirectorios[0])+"|";
-    else
-    grapho += " |";
-
-    if(root.avd_ap_array_subdirectorios[1]!=-1)
-    grapho += "<ap1>"+QString::number(root.avd_ap_array_subdirectorios[1])+"|";
-    else
-    grapho += " |";
-
-    if(root.avd_ap_array_subdirectorios[2]!=-1)
-    grapho += "<ap2>"+QString::number(root.avd_ap_array_subdirectorios[2])+"|";
-    else
-    grapho += " |";
-
-    if(root.avd_ap_array_subdirectorios[3]!=-1)
-    grapho += "<ap3>"+QString::number(root.avd_ap_array_subdirectorios[3])+"|";
-    else
-    grapho += " |";
-
-    if(root.avd_ap_array_subdirectorios[4]!=-1)
-    grapho += "<ap4>"+QString::number(root.avd_ap_array_subdirectorios[4])+"|";
-    else
-    grapho += " |";
-
-    if(root.avd_ap_array_subdirectorios[5]!=-1)
-    grapho += "<ap5>"+QString::number(root.avd_ap_array_subdirectorios[5])+"|";
-    else
-    grapho += " |";
-
-    if(root.avd_ap_detalle_directorio!=-1)
-    grapho += QString::number(root.avd_ap_detalle_directorio)+"|";
-    else
-    grapho += " |";
-
-    if(root.avd_ap_arbol_virtual_directorio!=-1)
-    grapho += "<ap7>"+QString::number(root.avd_ap_arbol_virtual_directorio);
-    else
-    grapho += " ";
-
-    grapho += "}";
-    grapho += "}\"";
-    grapho += "];\n";
-
-    for (int i=0; i<6;i++)
-        if(root.avd_ap_array_subdirectorios[i]!=-1){
-
-            grapho += "AVD"+QString::number(n)+":<ap"+QString::number(i)+">->AVD"+QString::number(root.avd_ap_array_subdirectorios[i])+";\n";
-            AVD directo = getAVD(path, inicioAVD, root.avd_ap_array_subdirectorios[i]);
-
-            grapho += getDotAVD2(path, directo, inicioAVD, root.avd_ap_array_subdirectorios[i]);
-        }
-
-    if(root.avd_ap_arbol_virtual_directorio!=-1){
-        grapho += "AVD"+QString::number(n)+":<ap7>->AVD"+QString::number(root.avd_ap_arbol_virtual_directorio)+";\n";
-        AVD indirecto = getAVD(path, inicioAVD, root.avd_ap_arbol_virtual_directorio);
-
-        grapho += getDotAVD2(path, indirecto, inicioAVD, root.avd_ap_arbol_virtual_directorio);
-    }
-
-    return grapho;
-}
-
 bool Procedures::generateRepDirectorio(QString path, QString id)
 {
     createDirectory(path);
@@ -2380,7 +2977,7 @@ bool Procedures::generateRepDirectorio(QString path, QString id)
 
     QString grapho = "digraph structs {\n";
     grapho += "splines = ortho\n";
-    grapho += getDotAVD2(pathmountedPartition,root,sb.sb_ap_arbol_directory,0);
+    grapho += getDotAVD(pathmountedPartition,root,sb.sb_ap_arbol_directory,0,"white");
     grapho += "}\n";
 
     QFile qFile("repDIRECTORIO.dot");
@@ -2417,513 +3014,8 @@ int Procedures::getN(int size)
     return ( size - static_cast<int>(2*sizeof(SUPERBOOT)))/static_cast<int>( 27 + sizeof(AVD) + sizeof(DD) + 5*sizeof(INODO) + 20*sizeof(BLOCK_DATA) + sizeof(BITACORA));
 }
 
-QString Procedures::getPathMountedPartition(QString id)
-{
-    for(int i =0;i < mounts.size();i++)
-    {
-        QStringList datos = mounts.at(i).split(',', QString::SkipEmptyParts);
-        if(datos[2]==id)
-        {
-            return datos[0];
-        }
-    }
-    return "";
-}
 
-MOUNTEDPARTITION Procedures::getMountedPartition(QString id)
-{
-
-    MBR mbr;
-    EBR nulo;
-    nulo.part_fit = '\0';
-    nulo.part_next = 0;
-    nulo.part_size = 0;
-    nulo.part_start = 0;
-    nulo.part_status = '\0';
-
-    MOUNTEDPARTITION retornonulo;
-    retornonulo = toMountedPartition(nulo,"");
-
-    for (int i=0;i<16;i++)
-        nulo.part_name[i]='\0';
-
-    for(int i =0;i < mounts.size();i++)
-    {
-        QStringList datos = mounts.at(i).split(',', QString::SkipEmptyParts);
-        if(datos[2]==id)
-        {
-            mbr = getMBR(datos[0],0);
-
-
-            QStringList directorios = datos[0].split('/', QString::SkipEmptyParts);
-
-            QString hd = directorios.at(directorios.length()-1).split('.', QString::SkipEmptyParts)[0];
-
-            if(QString::fromLatin1(mbr.mbr_partition_1.part_name,sizeof(mbr.mbr_partition_1.part_name)).remove('\000')==datos[1])
-                return toMountedPartition(mbr.mbr_partition_1, hd);
-            else if(QString::fromLatin1(mbr.mbr_partition_2.part_name,sizeof(mbr.mbr_partition_2.part_name)).remove('\000')==datos[1])
-                return toMountedPartition(mbr.mbr_partition_2, hd);
-            else if(QString::fromLatin1(mbr.mbr_partition_3.part_name,sizeof(mbr.mbr_partition_3.part_name)).remove('\000')==datos[1])
-                return toMountedPartition(mbr.mbr_partition_3, hd);
-            else if(QString::fromLatin1(mbr.mbr_partition_4.part_name,sizeof(mbr.mbr_partition_4.part_name)).remove('\000')==datos[1])
-                return toMountedPartition(mbr.mbr_partition_4, hd);
-
-            int inicio = -1;
-            int fin = -1;
-
-            EBR tmp = nulo;
-
-            if(mbr.mbr_partition_1.part_status=='1' && mbr.mbr_partition_1.part_type=='E')
-            {
-                inicio = mbr.mbr_partition_1.part_start;
-                fin = mbr.mbr_partition_1.part_start + mbr.mbr_partition_1.part_size;
-            }
-            if(mbr.mbr_partition_2.part_status=='1' && mbr.mbr_partition_2.part_type=='E')
-            {
-                inicio = mbr.mbr_partition_2.part_start;
-                fin = mbr.mbr_partition_2.part_start + mbr.mbr_partition_2.part_size;
-            }
-            if(mbr.mbr_partition_3.part_status=='1' && mbr.mbr_partition_3.part_type=='E')
-            {
-                inicio = mbr.mbr_partition_3.part_start;
-                fin = mbr.mbr_partition_3.part_start + mbr.mbr_partition_3.part_size;
-            }
-            if(mbr.mbr_partition_4.part_status=='1' && mbr.mbr_partition_4.part_type=='E')
-            {
-                inicio = mbr.mbr_partition_4.part_start;
-                fin = mbr.mbr_partition_4.part_start + mbr.mbr_partition_4.part_size;
-            }
-
-            if(inicio!=-1)
-            {
-                int pos= inicio;
-                tmp = getEBR(datos.at(0).toUtf8(),pos);
-                if( tmp.part_status != '\0')
-                {
-                    do
-                    {
-                        if(QString::fromLatin1(tmp.part_name,sizeof(tmp.part_name)).remove('\000') ==  datos[1])
-                        {
-                            return toMountedPartition(tmp, hd);
-                        }
-                        pos = tmp.part_next;
-                        tmp = nulo;
-                        if(pos!=-1)
-                            tmp = getEBR(datos.at(0).toUtf8(),pos);
-                    }
-                    while(tmp.part_status != '\0');
-                }
-            }
-        }
-    }
-    return retornonulo;
-}
-MOUNTEDPARTITION Procedures::toMountedPartition(PARTITION partition, QString hd)
-{
-    MOUNTEDPARTITION retorno;
-
-    for (int i=0;i<16;i++)
-        if(i<hd.size())
-            retorno.hd[i]= hd.at(i).toLatin1();
-        else
-            retorno.hd[i] = '\0';
-
-    retorno.part_fit = partition.part_fit;
-    retorno.part_size = partition.part_size;
-    retorno.part_type = partition.part_type;
-    retorno.part_start = partition.part_start;
-    retorno.part_status = partition.part_status;
-
-    return retorno;
-}
-MOUNTEDPARTITION Procedures::toMountedPartition(EBR ebr, QString hd){
-    MOUNTEDPARTITION retorno;
-
-    for (int i=0;i<16;i++)
-        if(i<hd.size())
-            retorno.hd[i]= hd.at(i).toLatin1();
-        else
-            retorno.hd[i] = '\0';
-
-    retorno.part_fit = ebr.part_fit;
-    retorno.part_size = ebr.part_size - static_cast<int>(sizeof(EBR));
-    retorno.part_type = 'L';
-    retorno.part_start = ebr.part_start  + static_cast<int>(sizeof(EBR));
-    retorno.part_status = ebr.part_status;
-
-    return retorno;
-}
-
-char* Procedures::createBM(int n){
-    char* BM= new char[n];
-    for (int i=0; i<n;i++)
-        BM[i] = '0';
-
-    return BM;
-}
-void Procedures::setBitMap(QString path, char* bitmap, int pos)
-{
-    ifstream exist(path.toUtf8(),ios::in);
-
-    if(exist.good())
-    {
-        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
-
-        writeLine("Insertando el BITMAP espere...");
-
-        file.seekp(pos);
-        file.write(reinterpret_cast<char*>(&bitmap), static_cast<int>(strlen(bitmap)));
-
-        file.close();
-        exist.close();
-        writeLine("se inserto el BITMAP con éxito");
-    }
-    else
-        writeError("Disco no existe en la ubicación");
-}
-char* Procedures::getBitMap(QString path, int n, int pos)
-{
-    char* retorno = new char[n];
-
-    ifstream file(path.toUtf8());
-    if(file.is_open())
-    {
-        file.seekg(pos,ios::beg);
-        file.read(reinterpret_cast<char*>(&retorno),static_cast<int>(strlen(retorno)));
-        file.close();
-    }
-
-    return retorno;
-}
-int Procedures::getFirstFreeBM(char* bitmap){
-    for (int i=0;i<static_cast<int>(strlen(bitmap));i++)
-        if(bitmap[i]=='0')
-            return i;
-
-    return -1;
-}
-
-SUPERBOOT Procedures::createSuperBoot(MOUNTEDPARTITION mountedPartition){
-    SUPERBOOT retorno;
-    int n = getN(mountedPartition.part_size);
-
-    strcpy(retorno.sb_nombre_hd,mountedPartition.hd);
-
-    retorno.sb_arbol_virtual_count = n;
-    retorno.sb_detalle_directory_count = n;
-    retorno.sb_inodos_count = 5*n;
-    retorno.sb_bloques_count = 20*n;
-    retorno.sb_arbol_virtual_free = n;
-    retorno.sb_detalle_directory_free = n;
-    retorno.sb_inodos_free = 5*n;
-    retorno.sb_bloques_free = 20*n;
-    retorno.sb_date_creacion = time(nullptr);
-    retorno.sb_date_ultimo_montaje = time(nullptr);
-    retorno.sb_montaje_count = 0;
-    retorno.sb_ap_bitmap_arbol_directorio = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT));
-    retorno.sb_ap_arbol_directory = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n ;
-    retorno.sb_ap_bitmap_detalle_directory = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD));
-    retorno.sb_ap_detalle_directory = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n;
-    retorno.sb_ap_bitmap_table_inodo = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n + n*static_cast<int>(sizeof(DD));
-    retorno.sb_ap_table_inodo = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n + n*static_cast<int>(sizeof(DD)) + 5*n;
-    retorno.sb_ap_bitmap_bloques = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n + n*static_cast<int>(sizeof(DD)) + 5*n + 5*n*static_cast<int>(sizeof(INODO));
-    retorno.sb_ap_bloques = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n + n*static_cast<int>(sizeof(DD)) + 5*n + 5*n*static_cast<int>(sizeof(INODO)) + 20*n;
-    retorno.sb_ap_log = mountedPartition.part_start + static_cast<int>(sizeof(SUPERBOOT)) + n + n*static_cast<int>(sizeof(AVD)) + n + n*static_cast<int>(sizeof(DD)) + 5*n + 5*n*static_cast<int>(sizeof(INODO)) + 20*n + 20*n*static_cast<int>(sizeof(BLOCK_DATA));
-    retorno.size_struct_arbol_directorio = static_cast<int>(sizeof(AVD));
-    retorno.size_struct_detalle_directorio = static_cast<int>(sizeof(DD));
-    retorno.size_struct_inodo = static_cast<int>(sizeof(INODO));
-    retorno.size_struct_bloque = static_cast<int>(sizeof(BLOCK_DATA));
-    retorno.sb_first_free_bit_arbol_directorio = 0;
-    retorno.sb_first_free_bit_detalle_directorio = 0;
-    retorno.sb_first_free_bit_tabla_inodo = 0;
-    retorno.sb_first_free_bit_bloques = 0;
-    retorno.sb_magic_num = 201113915;
-
-    return retorno;
-}
-void Procedures::setSuperBoot(QString path, SUPERBOOT superblock, int pos)
-{
-    ifstream exist(path.toUtf8(),ios::in);
-
-    if(exist.good())
-    {
-        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
-
-        writeLine("Insertando el SUPERBOOT espere...");
-
-        file.seekp(pos);
-        file.write(reinterpret_cast<char*>(&superblock),sizeof(SUPERBOOT));
-
-        file.close();
-
-        exist.close();
-        writeLine("se inserto el SUPERBOOT con éxito");
-    }
-    else
-        writeError("Disco no existe en la ubicación");
-}
-SUPERBOOT Procedures::getSuperBoot(QString path, int pos)
-{
-    SUPERBOOT retorno;
-    ifstream file(path.toUtf8());
-    if(file.is_open())
-    {
-        file.seekg(pos,ios::beg);
-        file.read(reinterpret_cast<char*>(&retorno),sizeof(SUPERBOOT));
-        file.close();
-    }
-    return retorno;
-}
-
-AVD Procedures::createAVD(QString name, int det, int usr){
-    AVD retorno;
-
-    retorno.avd_fecha_creacion = time(nullptr);
-
-    for (int i=0;i<20;i++)
-        if(i<name.size())
-            retorno.avd_nombre_directorio[i] = name.at(i).toLatin1();
-        else
-            retorno.avd_nombre_directorio[i] = '\0';
-
-    for (int i=0; i<6; i++) {
-        retorno.avd_ap_array_subdirectorios[i] =-1;
-    }
-
-    retorno.avd_ap_detalle_directorio = det;
-    retorno.avd_ap_arbol_virtual_directorio = -1;
-    retorno.avd_proper = usr;
-
-    return retorno;
-}
-void Procedures::setAVD(QString path, AVD avd, int start, int n)
-{
-    ifstream exist(path.toUtf8(),ios::in);
-
-    if(exist.good())
-    {
-        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
-
-        writeLine("Insertando el AVD espere...");
-
-        file.seekp(start + n*static_cast<int>(sizeof(AVD)));
-        file.write(reinterpret_cast<char*>(&avd),sizeof(AVD));
-
-        file.close();
-
-        exist.close();
-        writeLine("se inserto el AVD con éxito");
-    }
-    else
-        writeError("Disco no existe en la ubicación");
-}
-AVD Procedures::getAVD(QString path, int start, int n)
-{
-    AVD retorno;
-    ifstream file(path.toUtf8());
-    if(file.is_open())
-    {
-        file.seekg(start + n*static_cast<int>(sizeof(AVD)),ios::beg);
-        file.read(reinterpret_cast<char*>(&retorno),sizeof(AVD));
-        file.close();
-    }
-    return retorno;
-}
-
-BLOCK_FILE Procedures::createBlockFile(QString name, int ap_inodo){
-    BLOCK_FILE retorno;
-
-    for (int i=0;i<20;i++)
-        if(i<name.size())
-            retorno.dd_file_nombre[i] = name.at(i).toLatin1();
-        else
-            retorno.dd_file_nombre[i] = '\0';
-
-    retorno.dd_file_ap_inodo = ap_inodo;
-
-    retorno.dd_file_date_creation = time(nullptr);
-    retorno.dd_file_date_modificacion = time(nullptr);
-
-    return retorno;
-}
-
-DD Procedures::createDD(){
-    DD retorno;
-
-    for (int i=0; i<5;i++)
-        retorno.dd_array_files[i] = createBlockFile("",-1);
-
-    retorno.dd_ap_detalle_directorio = -1;
-
-    return retorno;
-}
-void Procedures::setDD(QString path, DD dd, int start, int n)
-{
-    ifstream exist(path.toUtf8(),ios::in);
-
-    if(exist.good())
-    {
-        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
-
-        writeLine("Insertando el DD espere...");
-
-        file.seekp(start + n*static_cast<int>(sizeof(DD)));
-        file.write(reinterpret_cast<char*>(&dd),sizeof(DD));
-
-        file.close();
-
-        exist.close();
-        writeLine("se inserto el DD con éxito");
-    }
-    else
-        writeError("Disco no existe en la ubicación");
-}
-DD Procedures::getDD(QString path, int start, int n)
-{
-    DD retorno;
-    ifstream file(path.toUtf8());
-    if(file.is_open())
-    {
-        file.seekg(start + n*static_cast<int>(sizeof(DD)),ios::beg);
-        file.read(reinterpret_cast<char*>(&retorno),sizeof(DD));
-        file.close();
-    }
-    return retorno;
-}
-
-INODO Procedures::createInodo(int inodo, int size, int proper){
-    INODO retorno;
-
-    retorno.i_count_inodo = inodo;
-    retorno.i_size_archivo = size;
-    retorno.i_count_bloques_asignados = 0;
-
-    for (int i=0; i<4; i++)
-        retorno.i_array_bloques[i]=-1;
-
-    retorno.i_ap_indirecto = -1;
-    retorno.I_id_proper = proper;
-
-    return retorno;
-}
-void Procedures::setInodo(QString path, INODO inodo, int start, int n)
-{
-    ifstream exist(path.toUtf8(),ios::in);
-
-    if(exist.good())
-    {
-        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
-
-        writeLine("Insertando el INODO espere...");
-
-        file.seekp(start + n*static_cast<int>(sizeof(INODO)));
-        file.write(reinterpret_cast<char*>(&inodo),sizeof(INODO));
-
-        file.close();
-
-        exist.close();
-        writeLine("se inserto el INODO con éxito");
-    }
-    else
-        writeError("Disco no existe en la ubicación");
-}
-INODO Procedures::getInodo(QString path, int start, int n)
-{
-    INODO retorno;
-    ifstream file(path.toUtf8());
-    if(file.is_open())
-    {
-        file.seekg(start + n*static_cast<int>(sizeof(INODO)),ios::beg);
-        file.read(reinterpret_cast<char*>(&retorno),sizeof(INODO));
-        file.close();
-    }
-    return retorno;
-}
-
-BLOCK_DATA Procedures::createBlockData(QString block){
-    BLOCK_DATA retorno;
-
-    for (int i=0;i<25;i++)
-        if(i<block.size())
-            retorno.bd_data[i] = block.at(i).toLatin1();
-        else
-            retorno.bd_data[i] = '\0';
-
-    return retorno;
-}
-void Procedures::setBlockData(QString path, BLOCK_DATA blockdata, int start, int n)
-{
-    ifstream exist(path.toUtf8(),ios::in);
-
-    if(exist.good())
-    {
-        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
-
-        writeLine("Insertando el BLOCK_DATA espere...");
-
-        file.seekp(start + n*static_cast<int>(sizeof(BLOCK_DATA)));
-        file.write(reinterpret_cast<char*>(&blockdata),sizeof(BLOCK_DATA));
-
-        file.close();
-
-        exist.close();
-        writeLine("se inserto el BLOCK_DATA con éxito");
-    }
-    else
-        writeError("Disco no existe en la ubicación");
-}
-BLOCK_DATA Procedures::getBlockData(QString path, int start, int n)
-{
-    BLOCK_DATA retorno;
-    ifstream file(path.toUtf8());
-    if(file.is_open())
-    {
-        file.seekg(start + n*static_cast<int>(sizeof(BLOCK_DATA)),ios::beg);
-        file.read(reinterpret_cast<char*>(&retorno),sizeof(BLOCK_DATA));
-        file.close();
-    }
-    return retorno;
-}
-
-BITACORA Procedures::createBitacora(MOUNTEDPARTITION mountedPartition){
-    BITACORA retorno;
-
-    return retorno;
-}
-void Procedures::setBitacora(QString path, BITACORA bitacora, int start, int n)
-{
-    ifstream exist(path.toUtf8(),ios::in);
-
-    if(exist.good())
-    {
-        ofstream file( path.toUtf8(), ios::in | ios::out | ios::binary);
-
-        writeLine("Insertando el BITACORA espere...");
-
-        file.seekp(start + n*static_cast<int>(sizeof(BITACORA)));
-        file.write(reinterpret_cast<char*>(&bitacora),sizeof(BITACORA));
-
-        file.close();
-
-        exist.close();
-        writeLine("se inserto el BITACORA con éxito");
-    }
-    else
-        writeError("Disco no existe en la ubicación");
-}
-BITACORA Procedures::getBitacora(QString path, int start, int n)
-{
-    BITACORA retorno;
-    ifstream file(path.toUtf8());
-    if(file.is_open())
-    {
-        file.seekg(start + n*static_cast<int>(sizeof(BITACORA)),ios::beg);
-        file.read(reinterpret_cast<char*>(&retorno),sizeof(BITACORA));
-        file.close();
-    }
-    return retorno;
-}
-
+//Metodos para carpetas.
 int Procedures::existCarpetaAVD(QString path, int start, AVD root, QString name)
 {
     for (int i=0;i<6;i++)
@@ -2936,103 +3028,362 @@ int Procedures::existCarpetaAVD(QString path, int start, AVD root, QString name)
 
     return -1;
 }
-AVD Procedures::getCarpetaAVD(QString path, int start, AVD root, QString name)
+AVD Procedures::getCarpetaAVD(QString path, int start, AVD root, QString name, int usr)
 {
-    AVD nulo = createAVD("",-1,0);
+    AVD nulo = createAVD("", -1, 0, 664);
 
-    for (int i=0;i<6;i++)
-        if(root.avd_ap_array_subdirectorios[i]!=-1)
-            if( QString::fromLatin1(getAVD(path, start, root.avd_ap_array_subdirectorios[i]).avd_nombre_directorio).remove('\000') == name)
-                return getAVD(path, start, root.avd_ap_array_subdirectorios[i]);
+    PERMISOS perm =  getPermisos(root.avd_perm);
 
-    if(root.avd_ap_arbol_virtual_directorio!=-1)
-        return getCarpetaAVD(path, start, getAVD(path, start, root.avd_ap_arbol_virtual_directorio), name);
+    if(getPermisoLectura(root.avd_proper, usr, perm)){
+        for (int i=0;i<6;i++)
+            if(root.avd_ap_array_subdirectorios[i]!=-1)
+                if( QString::fromLatin1(getAVD(path, start, root.avd_ap_array_subdirectorios[i]).avd_nombre_directorio).remove('\000') == name)
+                    return getAVD(path, start, root.avd_ap_array_subdirectorios[i]);
+
+        if(root.avd_ap_arbol_virtual_directorio!=-1)
+            return getCarpetaAVD(path, start, getAVD(path, start, root.avd_ap_arbol_virtual_directorio), name, usr);
+    }
 
     return nulo;
 }
 bool Procedures::insertarCarpetaAVD(QString path, SUPERBOOT sb, AVD root, int ap_root, QString name, int usr){
-    //TODO Hacerla despacio recordar manejar bien los bitmap y agregar el detalle. Y si se crea un nuevo AVD verificar bien lo que se esta realizando.
+    PERMISOS perm =  getPermisos(root.avd_perm);
 
-    for (int i=0; i<6;i++)
-        if(root.avd_ap_array_subdirectorios[i]==-1){
-            char* BMINODO = getBitMap(path, sb.sb_inodos_count, sb.sb_ap_bitmap_table_inodo);
-            char* BMBLOCK = getBitMap(path, sb.sb_bloques_count, sb.sb_ap_bitmap_bloques);
-            char* BMDD = getBitMap(path, sb.sb_detalle_directory_count, sb.sb_ap_bitmap_detalle_directory);
-            char* BMAVD = getBitMap(path, sb.sb_arbol_virtual_count, sb.sb_ap_bitmap_arbol_directorio);
+    if(getPermisoEscritura(root.avd_proper, usr, perm)){
 
-            int bit_free_DD = getFirstFreeBM(BMDD);
+        for (int i=0; i<6;i++)
+            if(root.avd_ap_array_subdirectorios[i]==-1){
+                QString BMDD = getBitMap(path, sb.sb_detalle_directory_count, sb.sb_ap_bitmap_detalle_directory);
+                QString BMAVD = getBitMap(path, sb.sb_arbol_virtual_count, sb.sb_ap_bitmap_arbol_directorio);
+
+                int bit_free_DD = getFirstFreeBM(BMDD);
+                int bit_free_AVD = getFirstFreeBM(BMAVD);
+
+                root.avd_ap_array_subdirectorios[i] = bit_free_AVD;
+
+                sb.sb_detalle_directory_free--;
+                sb.sb_arbol_virtual_free--;
+
+                BMDD[bit_free_DD] = '1';
+                BMAVD[bit_free_AVD] = '1';
+
+                DD dd_nuevaCarpeta = createDD();
+                AVD nuevaCarpeta = createAVD(name,bit_free_DD, usr, 664);
+
+                setDD(path,dd_nuevaCarpeta,sb.sb_ap_detalle_directory,bit_free_DD);
+                setAVD(path, nuevaCarpeta, sb.sb_ap_arbol_directory,bit_free_AVD);
+                setAVD(path, root, sb.sb_ap_arbol_directory, ap_root);
+
+                setData(path, sb.sb_ap_bitmap_arbol_directorio - static_cast<int>( sizeof (SUPERBOOT)), sb, BMAVD, BMDD, "", "");
+                return true;
+            }
+
+        if(root.avd_ap_arbol_virtual_directorio!=-1)
+            return insertarCarpetaAVD(path,sb,getAVD(path,sb.sb_ap_arbol_directory,root.avd_ap_arbol_virtual_directorio),root.avd_ap_arbol_virtual_directorio,name,usr);
+        else{
+            QString BMDD = getBitMap(path, sb.sb_detalle_directory_count, sb.sb_ap_bitmap_detalle_directory);
+            QString BMAVD = getBitMap(path, sb.sb_arbol_virtual_count, sb.sb_ap_bitmap_arbol_directorio);
+
             int bit_free_AVD = getFirstFreeBM(BMAVD);
 
-            root.avd_ap_array_subdirectorios[i] = bit_free_AVD;
-
-            sb.sb_detalle_directory_free--;
             sb.sb_arbol_virtual_free--;
 
-            BMDD[bit_free_DD] = '1';
             BMAVD[bit_free_AVD] = '1';
 
-            DD dd_nuevaCarpeta = createDD();
-            AVD nuevaCarpeta = createAVD(name,bit_free_DD, usr);
+            root.avd_ap_arbol_virtual_directorio = bit_free_AVD;
 
-            setDD(path,dd_nuevaCarpeta,sb.sb_ap_detalle_directory,bit_free_DD);
-            setAVD(path, nuevaCarpeta, sb.sb_ap_arbol_directory,bit_free_AVD);
+            AVD indirectoAVD = createAVD(root.avd_nombre_directorio, -1, usr, 664);
+
+            setAVD(path, indirectoAVD, sb.sb_ap_arbol_directory, bit_free_AVD);
             setAVD(path, root, sb.sb_ap_arbol_directory, ap_root);
 
-            setData(path, sb.sb_ap_bitmap_arbol_directorio - static_cast<int>( sizeof (SUPERBOOT)), sb, BMAVD, BMDD, BMINODO, BMBLOCK);
-            return true;
+            setData(path, sb.sb_ap_bitmap_arbol_directorio - static_cast<int>( sizeof (SUPERBOOT)), sb, BMAVD, BMDD, "", "");
+
+            insertarCarpetaAVD(path, sb, indirectoAVD, bit_free_AVD, name,usr);
         }
 
-    if(root.avd_ap_arbol_virtual_directorio!=-1)
-        return insertarCarpetaAVD(path,sb,getAVD(path,sb.sb_ap_arbol_directory,root.avd_ap_arbol_virtual_directorio),root.avd_ap_arbol_virtual_directorio,name,usr);
-    else{
-        char* BMINODO = getBitMap(path, sb.sb_inodos_count, sb.sb_ap_bitmap_table_inodo);
-        char* BMBLOCK = getBitMap(path, sb.sb_bloques_count, sb.sb_ap_bitmap_bloques);
-        char* BMDD = getBitMap(path, sb.sb_detalle_directory_count, sb.sb_ap_bitmap_detalle_directory);
-        char* BMAVD = getBitMap(path, sb.sb_arbol_virtual_count, sb.sb_ap_bitmap_arbol_directorio);
+    }
+    return false;
+}
+bool Procedures::removerCarpetaAVD(QString path, SUPERBOOT sb, AVD root, int ap_root, int usr){
+    bool retorno= true;
+    PERMISOS perm =  getPermisos(root.avd_perm);
 
-        int bit_free_AVD = getFirstFreeBM(BMAVD);
+    if(getPermisoEscritura(root.avd_proper, usr, perm)){
+        for (int i=0; i<6;i++) {
+            if (root.avd_ap_array_subdirectorios[i]!=-1)
+            {
+                if(removerCarpetaAVD(path,sb,getAVD(path,sb.sb_ap_arbol_directory,root.avd_ap_array_subdirectorios[i]),root.avd_ap_array_subdirectorios[i],usr)){
 
-        sb.sb_arbol_virtual_free--;
+                }
+            }
 
-        BMAVD[bit_free_AVD] = '1';
 
-        root.avd_ap_arbol_virtual_directorio = bit_free_AVD;
+        }
+    }
+    return retorno;
+}
 
-        AVD indirectoAVD = createAVD(root.avd_nombre_directorio, -1, usr);
 
-        setAVD(path, indirectoAVD, sb.sb_ap_arbol_directory, bit_free_AVD);
-        setAVD(path, root, sb.sb_ap_arbol_directory, ap_root);
+//Metodos para archivos.
+bool Procedures::existArchivoDD(QString path, int start, DD root, QString name){
+    for (int i = 0; i<5; i++) {
+        if(root.dd_array_files[i].dd_file_ap_inodo!=-1){
+            if(QString::fromLatin1(root.dd_array_files[i].dd_file_nombre).remove('\000')==name)
+                return true;
+        }
+    }
+    if(root.dd_ap_detalle_directorio!=-1){
+        return existArchivoDD(path, start, getDD(path,start,root.dd_ap_detalle_directorio),name);
+    }
+    return false;
+}
+bool Procedures::insertFileDD(QString path, SUPERBOOT sb, int ap_sb, DD root, int ap_root, QString name, int size, QString cont, int usr, int perm){
 
-        setData(path, sb.sb_ap_bitmap_arbol_directorio - static_cast<int>( sizeof (SUPERBOOT)), sb, BMAVD, BMDD, BMINODO, BMBLOCK);
+    QString BMINODO = getBitMap(path, sb.sb_inodos_count, sb.sb_ap_bitmap_table_inodo);
 
-        insertarCarpetaAVD(path, sb, indirectoAVD, bit_free_AVD, name,usr);
+    int bitfreeINODO = getFirstFreeBM(BMINODO);
+
+    INODO archivo = createInodo(bitfreeINODO,size,usr,perm);
+
+    for (int i = 0; i<5; i++) {
+        if(root.dd_array_files[i].dd_file_ap_inodo==-1){
+            BMINODO[bitfreeINODO] = '1';
+            root.dd_array_files[i] = createBlockFile(name,bitfreeINODO);
+
+            setDD(path,root,sb.sb_ap_detalle_directory,ap_root);
+            setInodo(path,archivo,sb.sb_ap_table_inodo,bitfreeINODO);
+
+            setData(path, ap_sb, sb,"","",BMINODO,"");
+
+            if(cont!="")
+                insertTextFile(path,sb,ap_sb,archivo,bitfreeINODO,cont);
+
+            return true;
+        }
+    }
+    if(root.dd_ap_detalle_directorio!=-1){
+        return insertFileDD(path,sb,ap_sb, getDD(path,sb.sb_ap_detalle_directory,root.dd_ap_detalle_directorio), root.dd_ap_detalle_directorio,name,size,cont,usr,perm);
+    }else{
+        QString BMDD = getBitMap(path, sb.sb_detalle_directory_count, sb.sb_ap_bitmap_detalle_directory);
+        int bitfreeDD = getFirstFreeBM(BMDD);
+        BMDD[bitfreeDD] = '1';
+
+        DD indirecto = createDD();
+        setDD(path,indirecto,sb.sb_ap_detalle_directory,bitfreeDD);
+        setData(path,ap_sb, sb,"",BMDD,"","");
+
+        return insertFileDD(path,sb,ap_sb,indirecto, bitfreeDD,name,size,cont,usr,perm);
+
     }
 
+}
+INODO Procedures::getInodoDD(QString path, int start_inodes, int start_dd, DD root, QString name){
+    //TODO verificar si tienes permisos de lectura.
+    INODO nulo = createInodo(-1,0,0,0);
+    for (int i = 0; i<5; i++) {
+        if(root.dd_array_files[i].dd_file_ap_inodo!=-1){
+            if(QString::fromLatin1(root.dd_array_files[i].dd_file_nombre).remove('\000')==name)
+                return getInodo(path,start_inodes,root.dd_array_files[i].dd_file_ap_inodo);
+        }
+    }
+    if(root.dd_ap_detalle_directorio!=-1){
+        return getInodoDD(path, start_inodes, start_dd, getDD(path,start_dd,root.dd_ap_detalle_directorio),name);
+    }
+    return nulo;
+}
+bool Procedures::insertTextFile(QString path, SUPERBOOT sb, int ap_sb, INODO archivo, int ap_inodo, QString cont){
+    //TODO verificar si tiene permisos de escritura.
+    QString BMBLOCK = getBitMap(path, sb.sb_bloques_count, sb.sb_ap_bitmap_bloques);
+    QString BMINODO = getBitMap(path, sb.sb_inodos_count, sb.sb_ap_bitmap_table_inodo);
+
+    int bitfreeBLOCK=0;
+
+    BLOCK_DATA BD;
+
+    for(int i = 0; i<4; i++){
+        if(cont.length()>25){
+            if(archivo.i_array_bloques[i]==-1){
+                bitfreeBLOCK = getFirstFreeBM(BMBLOCK);
+
+                BMBLOCK[bitfreeBLOCK] = '1';
+
+                archivo.i_array_bloques[i] = bitfreeBLOCK;
+
+                BD = createBlockData(cont.mid(0,25));
+                setBlockData(path,BD,sb.sb_ap_bloques,bitfreeBLOCK);
+
+                cont = cont.mid(25);
+            }else{
+                BD = createBlockData(cont.mid(0,25));
+                setBlockData(path,BD,sb.sb_ap_bloques,archivo.i_array_bloques[i]);
+
+                cont = cont.mid(25);
+            }
+
+        }
+        else{
+
+            if(archivo.i_array_bloques[i]==-1){
+                bitfreeBLOCK = getFirstFreeBM(BMBLOCK);
+
+                BMBLOCK[bitfreeBLOCK] = '1';
+
+                archivo.i_array_bloques[i] = bitfreeBLOCK;
+
+                BD = createBlockData(cont.mid(0,cont.length()));
+
+                setBlockData(path,BD,sb.sb_ap_bloques,bitfreeBLOCK);
+
+                cont = "";
+
+                setInodo(path,archivo,sb.sb_ap_table_inodo, ap_inodo);
+
+                setData(path,ap_sb,sb,"","","",BMBLOCK);
+                return true;
+            }else{
+                BD = createBlockData(cont.mid(0,25));
+                setBlockData(path,BD,sb.sb_ap_bloques,archivo.i_array_bloques[i]);
+
+                cont = "";
+
+                setInodo(path,archivo,sb.sb_ap_table_inodo, ap_inodo);
+
+                setData(path,ap_sb,sb,"","","",BMBLOCK);
+                return true;
+            }
+        }
+    }
+
+    if(archivo.i_ap_indirecto ==-1){
+
+
+        int freebitINODO = getFirstFreeBM(BMINODO);
+        archivo.i_ap_indirecto = freebitINODO;
+
+        setInodo(path,archivo,sb.sb_ap_table_inodo, ap_inodo);
+
+        BMINODO[freebitINODO] = '1';
+
+        INODO indirecto = createInodo(freebitINODO,archivo.i_size_archivo,archivo.i_id_proper,archivo.i_perm);
+        setInodo(path,indirecto,sb.sb_ap_table_inodo,freebitINODO);
+
+        setData(path,ap_sb,sb,"","",BMINODO,BMBLOCK);
+
+        return insertTextFile(path, sb, ap_sb, indirecto ,freebitINODO,cont);
+    }else{
+        setInodo(path,archivo,sb.sb_ap_table_inodo, ap_inodo);
+        setData(path,ap_sb,sb,"","",BMINODO,BMBLOCK);
+        return insertTextFile(path, sb, ap_sb, getInodo(path,sb.sb_ap_table_inodo,archivo.i_ap_indirecto),archivo.i_ap_indirecto,cont);
+    }
+
+}
+QString Procedures::getTextFile(QString path, SUPERBOOT sb, INODO archivo){
+    QString text="";
+    for (int i =0;i<4;i++)
+        if(archivo.i_array_bloques[i]!=-1)
+            text+= QString::fromLatin1(getBlockData(path,sb.sb_ap_bloques,archivo.i_array_bloques[i]).bd_data,25).remove('\000');
+
+    if(archivo.i_ap_indirecto !=-1)
+        text+=getTextFile(path,sb, getInodo(path, sb.sb_ap_table_inodo, archivo.i_ap_indirecto));
+
+    return text;
+}
+bool Procedures::removeTextFile(QString path, SUPERBOOT sb, INODO archivo, int usr){
+
+    QString BMBLOCK = getBitMap(path,sb.sb_bloques_count, sb.sb_ap_bitmap_bloques);
+    QString BMINODO = getBitMap(path,sb.sb_inodos_count, sb.sb_ap_bitmap_table_inodo);
+
+    PERMISOS perm =  getPermisos(archivo.i_perm);
+
+    if(getPermisoEscritura(archivo.i_id_proper, usr, perm)){
+
+        for (int i=0; i<4;i++) {
+            if(archivo.i_array_bloques[i]!=-1){
+                BMBLOCK[archivo.i_array_bloques[i]] = '0';
+                archivo.i_array_bloques[i] = -1;
+            }
+
+        }
+
+        if(archivo.i_ap_indirecto !=-1){
+            removeTextFile(path,sb,getInodo(path,sb.sb_ap_table_inodo,archivo.i_ap_indirecto),usr);
+            BMBLOCK[archivo.i_ap_indirecto] = '0';
+        }
+
+        setInodo(path,archivo,sb.sb_ap_table_inodo,archivo.i_count_inodo);
+
+        setData(path,sb.sb_ap_arbol_directory-static_cast<int>(sizeof(SUPERBOOT)),sb,"","",BMINODO,BMBLOCK);
+
+        return true;
+    }
     return false;
 }
 
-bool Procedures::existArchivoDD(QString path, int start, DD root, QString name){
+//Metodos para mover.
 
-}
-int Procedures::insertarArchivoDD(QString path, SUPERBOOT sb, DD root, QString name, int size, QString cont){
-    //TODO Hacerla despacio recordar manejar bien los bitmap y los apuntatadores del detalle. Verificar bien lo que se esta realizando.
-}
+//Metodos para copiar.
 
-void Procedures::setData(QString path , int startsb, SUPERBOOT sb, char* BMAVD, char*BMDD, char* BMINODO, char* BMBLOCK){
+//Metodos para renombrar.
 
-    sb.sb_first_free_bit_arbol_directorio = getFirstFreeBM(BMAVD);
-    sb.sb_first_free_bit_detalle_directorio = getFirstFreeBM(BMDD);
-    sb.sb_first_free_bit_tabla_inodo =getFirstFreeBM(BMINODO);
-    sb.sb_first_free_bit_bloques = getFirstFreeBM(BMBLOCK);
+//Metodos para Loss.
+
+//Metodos para Recovery.
+
+
+void Procedures::setData(QString path , int startsb, SUPERBOOT sb, QString BMAVD, QString BMDD, QString BMINODO, QString BMBLOCK){
 
     setSuperBoot(path, sb, startsb);
 
-    setBitMap(path, BMAVD, sb.sb_ap_bitmap_arbol_directorio);
-    setBitMap(path, BMDD, sb.sb_ap_bitmap_detalle_directory);
-    setBitMap(path, BMINODO, sb.sb_ap_bitmap_table_inodo);
-    setBitMap(path, BMBLOCK, sb.sb_ap_bitmap_bloques);
-
+    if(BMAVD!=""){
+        setBitMap(path, BMAVD, sb.sb_ap_bitmap_arbol_directorio);
+        sb.sb_first_free_bit_arbol_directorio = getFirstFreeBM(BMAVD);
+    }
+    if(BMDD!=""){
+        setBitMap(path, BMDD, sb.sb_ap_bitmap_detalle_directory);
+        sb.sb_first_free_bit_detalle_directorio = getFirstFreeBM(BMDD);
+    }
+    if(BMINODO!=""){
+        setBitMap(path, BMINODO, sb.sb_ap_bitmap_table_inodo);
+        sb.sb_first_free_bit_tabla_inodo =getFirstFreeBM(BMINODO);
+    }
+    if(BMBLOCK!=""){
+        setBitMap(path, BMBLOCK, sb.sb_ap_bitmap_bloques);
+        sb.sb_first_free_bit_bloques = getFirstFreeBM(BMBLOCK);
+    }
     setSuperBoot(path,sb, sb.sb_ap_log + sb.sb_arbol_virtual_count * static_cast<int>(sizeof(BITACORA)));
+
+}
+
+void Procedures::recuperarUsuarios(QString textuser, QString id)
+{
+    users.clear();
+    grps.clear();
+    QStringList registros = textuser.split('\n', QString::SkipEmptyParts);
+    QStringList registro;
+
+    for (int i=0; i<registros.length();i++) {
+        registro.clear();
+        registro = registros[i].remove(' ').split(',', QString::SkipEmptyParts);
+        if(registro[1]=="G")
+            grps.append(createGrp(registro[0].toInt(),registro[2].toUpper()));
+        else if(registro[1]=="U")
+            for (int j=0;j<grps.length();j++)
+                if(grps[j].name==registro[2])
+                    users.append(createUser(registro[0].toInt(), grps[j].grp, registro[2].toUpper(), registro[3].toUpper(), registro[4], id.toUpper()));
+    }
+
+}
+QString Procedures::getStringUserGrp(){
+    QStringList registros;
+    for (int i=0; i<grps.length();i++)
+        registros.append(QString::number(grps[i].grp) + ",G," + grps[i].name);
+
+
+    for (int i=0; i<users.length();i++)
+        registros.append(QString::number(users[i].usr) + ",U," + users[i].namegrp + "," + users[i].name + "," + users[i].pwd);
+
+    return registros.join("\n");
 
 }
 
@@ -3045,17 +3396,17 @@ void Procedures::formatPartition(QString id, QString type)
 
         SUPERBOOT sb = createSuperBoot(mountedPartition);
 
-        AVD avd = createAVD("/",0,1);
+        AVD avd = createAVD("/",0,1, 664);
 
         DD dd = createDD();
         dd.dd_array_files[0]= createBlockFile("user.txt",0);
 
-        INODO usertxt = createInodo(0,0,1);
+        INODO usertxt = createInodo(0, 0, 1, 664);
         usertxt.i_array_bloques[0]=0;
-        usertxt.i_array_bloques[0]=1;
+        usertxt.i_array_bloques[1]=1;
 
-        BLOCK_DATA bduser1 = createBlockData("1, G, root \n 1, U, root,");
-        BLOCK_DATA bduser2 = createBlockData(" root, 201113915 \n");
+        BLOCK_DATA bduser1 = createBlockData("1,G,ROOT\n1,U,ROOT,ROOT,2");
+        BLOCK_DATA bduser2 = createBlockData("01113915\n");
 
         sb.sb_inodos_free--;
         sb.sb_arbol_virtual_free--;
@@ -3063,10 +3414,10 @@ void Procedures::formatPartition(QString id, QString type)
         sb.sb_bloques_free--;
         sb.sb_bloques_free--;
 
-        char* BMAVD = createBM(sb.sb_arbol_virtual_count);
-        char* BMDD = createBM(sb.sb_detalle_directory_count);
-        char* BMINODO = createBM(sb.sb_inodos_count);
-        char* BMBLOCK = createBM(sb.sb_bloques_count);
+        QString BMAVD = createBitMap(sb.sb_arbol_virtual_count);
+        QString BMDD = createBitMap(sb.sb_detalle_directory_count);
+        QString BMINODO = createBitMap(sb.sb_inodos_count);
+        QString BMBLOCK = createBitMap(sb.sb_bloques_count);
 
         BMAVD[0] = '1';
         BMDD[0] = '1';
@@ -3103,23 +3454,178 @@ void Procedures::formatPartition(QString id, QString type)
 }
 bool Procedures::inicioSesion(QString usr, QString pwd, QString id)
 {
+    MOUNTEDPARTITION mountedPartition = getMountedPartition(id);
+    QString pathmountedPartition = getPathMountedPartition(id);
+
+    if(pathmountedPartition != ""){
+        SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
+        recuperarUsuarios(getTextFile(pathmountedPartition,sb,getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0)),id);
+        for (int i=0; i<users.length(); i++){
+            //writeLine(users[i].name + " - - - " + users[i].pwd);
+            if(users[i].name==usr.toUpper() && users[i].pwd==pwd){
+                userlogin = users[i];
+                return true;
+            }
+        }
+    }
+    return false;
+}
+bool Procedures::cerrarSesion()
+{
+    if(userlogin.name != ""){
+        userlogin = createUser(0,0,"","","","");
+        return true;
+    }
+    else
+        return false;
 
 }
-void Procedures::cerrarSesion()
-{
 
+bool Procedures::crearGrupo(QString name, QString id){
+    MOUNTEDPARTITION mountedPartition = getMountedPartition(id);
+    QString pathmountedPartition = getPathMountedPartition(id);
+
+    SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
+    recuperarUsuarios(getTextFile(pathmountedPartition,sb,getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0)),id);
+
+    QString txt = getStringUserGrp();
+
+    bool encontrado = false;
+    int idnuevo = 0;
+
+    if(pathmountedPartition != ""){
+
+        USER user = getUserLogin();
+
+        if(user.usr == 1 && user.name.toUpper()=="ROOT"){
+            for (int i=0;i<grps.length();i++) {
+                if(grps[i].name == name.toUpper()){
+                    encontrado = true;
+
+                }
+                if(grps[i].grp>idnuevo)
+                    idnuevo=grps[i].grp;
+            }
+
+            if(!encontrado){
+                grps.append(createGrp(idnuevo+1, name.toUpper()));
+                removeTextFile(pathmountedPartition, sb, getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0), user.usr);
+                insertTextFile(pathmountedPartition,sb,mountedPartition.part_start, getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0), 0, getStringUserGrp());
+                return true;
+            }
+        }
+
+    }
+    return false;
 }
-void Procedures::removerGrupo(QString name)
+bool Procedures::removerGrupo(QString name, QString id)
 {
+    MOUNTEDPARTITION mountedPartition = getMountedPartition(id);
+    QString pathmountedPartition = getPathMountedPartition(id);
 
+    SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
+    recuperarUsuarios(getTextFile(pathmountedPartition,sb,getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0)),id);
+
+    QString txt = getStringUserGrp();
+
+    if(pathmountedPartition != ""){
+        USER user = getUserLogin();
+
+        if(user.usr == 1 && user.name.toUpper()=="ROOT"){
+            for (int i=0; i<grps.length(); i++){
+                if(grps[i].name == name.toUpper())
+                {
+                    for (int j=0; j<users.length(); j++)
+                        if(users[j].grp==grps[i].grp)
+                            users.removeAt(j);
+
+                    grps.removeAt(i);
+                    removeTextFile(pathmountedPartition, sb, getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0), user.usr);
+                    insertTextFile(pathmountedPartition,sb,mountedPartition.part_start, getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0), 0, getStringUserGrp());
+                    return true;
+                }
+            }
+
+        }
+    }
+    return false;
 }
-void Procedures::crearUsuario(QString usr, QString pwd, QString grp)
+bool Procedures::crearUsuario(QString usr, QString pwd, QString grp, QString id)
 {
+    MOUNTEDPARTITION mountedPartition = getMountedPartition(id);
+    QString pathmountedPartition = getPathMountedPartition(id);
 
+    SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
+    recuperarUsuarios(getTextFile(pathmountedPartition,sb,getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0)),id);
+
+    QString txt = getStringUserGrp();
+
+    bool encontrado = false;
+    bool encontrado2 = false;
+    int idnuevo = 0;
+    int idgrp = 0;
+
+    if(pathmountedPartition != ""){
+
+        USER user = getUserLogin();
+
+        if(user.usr == 1 && user.name.toUpper()=="ROOT"){
+
+            for (int i=0; i<users.length(); i++){
+                if(users[i].name==usr){
+                    encontrado = true;
+                }
+                if(users[i].usr>idnuevo)
+                    idnuevo=users[i].usr;
+            }
+
+            for (int i=0;i<grps.length();i++) {
+                if(grps[i].name == grp.toUpper()){
+                    encontrado2 = true;
+                    idgrp = grps[i].grp;
+                }
+            }
+
+            if(!encontrado && encontrado2){
+                users.append(createUser(idnuevo+1, idgrp, grp.toUpper(), usr.toUpper(), pwd, id));
+                removeTextFile(pathmountedPartition, sb, getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0), user.usr);
+                insertTextFile(pathmountedPartition,sb,mountedPartition.part_start, getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0), 0, getStringUserGrp());
+                return true;
+            }
+        }
+
+    }
+    return false;
 }
-void Procedures::removerUsuario(QString usr)
+bool Procedures::removerUsuario(QString usr, QString id)
 {
+    MOUNTEDPARTITION mountedPartition = getMountedPartition(id);
+    QString pathmountedPartition = getPathMountedPartition(id);
 
+    SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
+    recuperarUsuarios(getTextFile(pathmountedPartition,sb,getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0)),id);
+
+    QString txt = getStringUserGrp();
+
+    if(pathmountedPartition != ""){
+
+        USER user = getUserLogin();
+
+        if(user.usr == 1 && user.name.toUpper()=="ROOT"){
+
+            for (int i=0; i<users.length(); i++){
+                if(users[i].name==usr){
+                    users.removeAt(i);
+                    removeTextFile(pathmountedPartition, sb, getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0), user.usr);
+                    insertTextFile(pathmountedPartition,sb,mountedPartition.part_start, getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0), 0, getStringUserGrp());
+                    return true;
+                }
+            }
+
+        }
+
+    }
+    return false;
 }
 void Procedures::cambiarPermisos(QString path, QString ugo, bool r)
 {
@@ -3144,22 +3650,27 @@ int Procedures::crearArchivoNuevo(QString id, QString path, bool p, int size, QS
 
             if(pos<carpetas.length()-1)
             {
-                if(!(existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos])!=-1)){//TODO Revisar este procedimiento ya que no funciona.
-                    insertarCarpetaAVD(pathmountedPartition, sb, root, ap_root, carpetas[pos], 1);//user 1 cambiar al validad login
-                    root = getAVD(pathmountedPartition, sb.sb_ap_arbol_directory, ap_root);
+                if(!(existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos])!=-1)){
+                    if(insertarCarpetaAVD(pathmountedPartition, sb, root, ap_root, carpetas[pos], userlogin.usr))
+                        root = getAVD(pathmountedPartition, sb.sb_ap_arbol_directory, ap_root);
+                    else
+                        return SIN_PERMISOS_ESCRITURA;
                 }
                 ap_root = existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos]);
-                root = getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos]);
+
+                if(QString::fromLatin1(getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos], userlogin.usr).avd_nombre_directorio).remove('\000')!="")
+                    root = getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos], userlogin.usr);
+                else
+                    return SIN_PERMISOS_LECTURA;
                 pos++;
             }else if (pos == carpetas.length() -1){
                 if(!existArchivoDD(pathmountedPartition, sb.sb_ap_arbol_directory, getDD(pathmountedPartition,sb.sb_ap_detalle_directory,root.avd_ap_detalle_directorio), carpetas[pos])){
-                    insertarArchivoDD(pathmountedPartition, sb, getDD(pathmountedPartition,sb.sb_ap_detalle_directory,root.avd_ap_detalle_directorio), carpetas[pos], size, cont);
-                    //FIXME AP DETALLE DIRECTORIO
+                    insertFileDD(pathmountedPartition, sb, mountedPartition.part_start, getDD(pathmountedPartition,sb.sb_ap_detalle_directory,root.avd_ap_detalle_directorio), root.avd_ap_detalle_directorio, carpetas[pos], size, cont, 1, 664);
+                    //TODO Validar usuario que inicia sesion
                     pos++;
                     return EXITO;
-                }else{
+                }else
                     return EXISTE;
-                }
             }
         }
     }else{
@@ -3170,25 +3681,75 @@ int Procedures::crearArchivoNuevo(QString id, QString path, bool p, int size, QS
                 if(!(existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos])!=-1))
                     return FALLO;
                 ap_root = existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos]);
-                root = getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos]);
+                if(QString::fromLatin1(getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos], userlogin.usr).avd_nombre_directorio).remove('\000')!="")
+                    root = getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos], userlogin.usr);
+                else
+                    return SIN_PERMISOS_LECTURA;
                 pos++;
             }else if (pos == carpetas.length() -1){
                 if(!existArchivoDD(pathmountedPartition, sb.sb_ap_arbol_directory, getDD(pathmountedPartition,sb.sb_ap_detalle_directory,root.avd_ap_detalle_directorio), carpetas[pos])){
-                    insertarArchivoDD(pathmountedPartition, sb, getDD(pathmountedPartition,sb.sb_ap_detalle_directory,root.avd_ap_detalle_directorio), carpetas[pos], size, cont);
-                    //FIXME AP DETALLE DIRECTORIO
+                    insertFileDD(pathmountedPartition, sb, mountedPartition.part_start, getDD(pathmountedPartition,sb.sb_ap_detalle_directory,root.avd_ap_detalle_directorio), root.avd_ap_detalle_directorio, carpetas[pos], size, cont, 1, 664);
+                    //TODO Validar usuario que inicia sesion
                     pos++;
                     return EXITO;
-                }else{
+                }else
                     return EXISTE;
-                }
             }
         }
     }
     return FALLO;
-}
-void Procedures::mostrarContenido(QString archive)
-{
 
+
+}
+int Procedures::mostrarContenido(QString id, QString archive){
+
+    QStringList carpetas = archive.split('/', QString::SkipEmptyParts);
+
+    MOUNTEDPARTITION mountedPartition = getMountedPartition(id);
+    QString pathmountedPartition = getPathMountedPartition(id);
+
+    SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
+
+    int pos = 0;
+    int ap_root = 0;
+
+    AVD root = getAVD(pathmountedPartition, sb.sb_ap_arbol_directory, ap_root);
+
+    while(pos<carpetas.length()){
+
+        if(pos<carpetas.length()-1)
+        {
+            if(!(existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos])!=-1))
+                return FALLO;
+            ap_root = existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos]);
+            root = getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos], userlogin.usr);
+            pos++;
+        }else if (pos == carpetas.length() -1){
+            if(existArchivoDD(pathmountedPartition, sb.sb_ap_arbol_directory, getDD(pathmountedPartition,sb.sb_ap_detalle_directory,root.avd_ap_detalle_directorio), carpetas[pos])){
+                {
+                    writeLine("Contenido: "+carpetas[pos]);
+                    QString txt =getTextFile(pathmountedPartition,sb,getInodoDD(pathmountedPartition,sb.sb_ap_table_inodo,sb.sb_ap_detalle_directory,getDD(pathmountedPartition,sb.sb_ap_detalle_directory,root.avd_ap_detalle_directorio),carpetas[pos]));
+                    if(txt!="")
+                        writeLine(txt.toUtf8());
+                    else
+                        writeError("Archivo sin contenido");
+                }
+                pos++;
+                return EXISTE;
+            }else{
+                return FALLO;
+            }
+        }
+    }
+
+    return FALLO;
+}
+void Procedures::mostrarContenido(QString id, QStringList archives)
+{
+    for (int i =0 ;i<archives.length();i++) {
+        if (mostrarContenido(id,archives[i])==FALLO)
+            writeError("No existe" + archives[i]);
+    }
 }
 void Procedures::eliminar(QString path)
 {
@@ -3221,17 +3782,22 @@ int Procedures::crearCarpetaNueva(QString id, QString path, bool p)
 
             if(pos<carpetas.length()-1)
             {
-                if(!(existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos])!=-1)){//TODO Revisar este procedimiento ya que no funciona.
-                    insertarCarpetaAVD(pathmountedPartition, sb, root, ap_root, carpetas[pos], 1);//user 1 cambiar al validad login
-                    root = getAVD(pathmountedPartition, sb.sb_ap_arbol_directory, ap_root);
+                if(!(existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos])!=-1)){
+                    if(insertarCarpetaAVD(pathmountedPartition, sb, root, ap_root, carpetas[pos], userlogin.usr))
+                        root = getAVD(pathmountedPartition, sb.sb_ap_arbol_directory, ap_root);
+                    else
+                        return SIN_PERMISOS_ESCRITURA;
                 }
                 ap_root = existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos]);
-                root = getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos]);
+
+                if(QString::fromLatin1(getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos], userlogin.usr).avd_nombre_directorio).remove('\000')!="")
+                    root = getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos], userlogin.usr);
+                else
+                    return SIN_PERMISOS_LECTURA;
                 pos++;
             }else if (pos == carpetas.length() -1){
                 if(!(existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos])!=-1)){
-                    insertarCarpetaAVD(pathmountedPartition, sb, root, ap_root, carpetas[pos], 1);//user 1 cambiar al validad login
-                    pos++;
+                    insertarCarpetaAVD(pathmountedPartition, sb, root, ap_root, carpetas[pos], userlogin.usr);
                     return EXITO;
                 }
                 else
@@ -3246,16 +3812,18 @@ int Procedures::crearCarpetaNueva(QString id, QString path, bool p)
                 if(!(existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos])!=-1))
                     return FALLO;
                 ap_root = existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos]);
-                root = getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos]);
+                if(QString::fromLatin1(getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos], userlogin.usr).avd_nombre_directorio).remove('\000')!="")
+                    root = getCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos], userlogin.usr);
+                else
+                    return SIN_PERMISOS_LECTURA;
                 pos++;
             }else if (pos == carpetas.length() -1){
                 if(!(existCarpetaAVD(pathmountedPartition, sb.sb_ap_arbol_directory, root, carpetas[pos])!=-1)){
-                    insertarCarpetaAVD(pathmountedPartition, sb, root, ap_root, carpetas[pos], 1);//user 1 cambiar al validad login
+                    insertarCarpetaAVD(pathmountedPartition, sb, root, ap_root, carpetas[pos], userlogin.usr);
                     pos++;
                     return EXITO;
-                }else{
+                }else
                     return EXISTE;
-                }
             }
         }
     }
@@ -3277,9 +3845,39 @@ void Procedures::cambiarPropietario(QString path, QString usr, bool r)
 {
 
 }
-void Procedures::cambiarGrupo(QString usr, QString grp)
+bool Procedures::cambiarGrupo(QString usr, QString grp)
 {
+    USER user = getUserLogin();
+    MOUNTEDPARTITION mountedPartition = getMountedPartition(user.id.toLower());
+    QString pathmountedPartition = getPathMountedPartition(user.id.toLower());
 
+    SUPERBOOT sb = getSuperBoot(pathmountedPartition, mountedPartition.part_start);
+    recuperarUsuarios(getTextFile(pathmountedPartition,sb,getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0)),user.id);
+
+    QString txt = getStringUserGrp();
+
+
+    //TODO verificar ID de la particion sean iguales
+    if(pathmountedPartition != ""){
+        if(user.usr == 1 && user.name.toUpper()=="ROOT"){
+            for (int i=0; i<grps.length(); i++){
+                if(grps[i].name == grp.toUpper())
+                {
+                    for (int j=0; j<users.length(); j++)
+                        if(users[j].name==usr.toUpper())
+                        {
+                            users[j].grp = grps[i].grp;
+                            users[j].namegrp = grps[i].name;
+                            removeTextFile(pathmountedPartition, sb, getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0), user.usr);
+                            insertTextFile(pathmountedPartition,sb,mountedPartition.part_start, getInodo(pathmountedPartition,sb.sb_ap_table_inodo,0), 0, getStringUserGrp());
+                            return true;
+                        }
+                }
+            }
+
+        }
+    }
+    return false;
 }
 void Procedures::perdida(QString id)
 {
@@ -3289,3 +3887,12 @@ void Procedures::recuperacion(QString id)
 {
 
 }
+
+
+
+//TODO verificar crear usuario y grupo
+//Renombrar
+//TODO Mover Archivo y Carpeta
+//TODO Remover archivo y carpeta
+//TODO Copiar archivo y carpeta
+

@@ -156,6 +156,7 @@ RE_Unit             "b"|"k"|"m"
 {RE_Path}           {column=column+previous; previous = strlen(yytext); strcpy(yylval.TEXT, yytext); return RE_Path;}
 "\t"                {strcpy(yylval.TEXT, yytext); column=26;}
 [[:blank:]]         {column++;}
+"\^"                {column++;}
 "\n"                {line++; column=0; previous=0;}
 .                   {
                       column=column+previous; previous = strlen(yytext);strcpy(yylval.TEXT, yytext);

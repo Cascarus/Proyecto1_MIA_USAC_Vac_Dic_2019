@@ -21,14 +21,20 @@ void NT_Mkgrp::tourAST(NodeAST *node, QString command)
         default: Procedures::writeError("Parametro "+parameter.type.toUpper()+" no permitido en MKGRP"); ERROR = true; break;
         }
     }
-    if(!ERROR) execute(name, command); else Procedures::writeError("Verificar comando ingresado.");
+    if(!ERROR) execute(name, id, command); else Procedures::writeError("Verificar comando ingresado.");
 }
 
-void NT_Mkgrp::execute(QString name, QString command)
+void NT_Mkgrp::execute(QString name, QString id, QString command)
 {
     Procedures::writeCommand(command);
     if(id!="" && name!=""){
         Procedures::writeLine("llego a execute NT_Mkgrp");
+
+
+        if(Procedures::crearGrupo(name, id))
+            Procedures::writeLine("Se creo el grupo exitosamente");
+        else
+            Procedures::writeError("No se creo el grupo porque ya existe.");
     }
     else{
         if(id=="")

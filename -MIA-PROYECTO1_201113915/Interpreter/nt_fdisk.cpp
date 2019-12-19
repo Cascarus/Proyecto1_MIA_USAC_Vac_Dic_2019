@@ -73,7 +73,7 @@ void NT_Fdisk::execute(int size, QString unit, QString path, QString type, QStri
                     if(size!=0)
                         Procedures::createPartition(size, unit, path, type, fit, name);
                     else
-                       Procedures::writeError("Falta el parametro &size");
+                        Procedures::writeError("Falta el parametro &size");
                 else
                     Procedures::writeError("Nombre para particion no disponible");
             }
