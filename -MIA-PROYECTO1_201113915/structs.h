@@ -81,6 +81,11 @@ typedef struct SUPERBOOT
     int         sb_magic_num;
 }SUPERBOOT;
 
+typedef struct POINTER{
+    QString name;
+    int pointer;
+}POINTER;
+
 typedef struct AVD
 {
     time_t      avd_fecha_creacion;
@@ -128,6 +133,8 @@ typedef struct BITACORA{
     char        log_nombre[256];
     char        log_contenido[256];
     time_t      log_fecha;
+    char        id[10];
+    bool        recursividad;
 }BITACORA;
 
 typedef struct USER{

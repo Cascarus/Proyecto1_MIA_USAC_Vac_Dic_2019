@@ -1,0 +1,39 @@
+digraph D{
+graph [pad="0.5", nodesep="0.5", ranksep="2"];
+node [shape=plain]
+rankdir=LR;
+arset [label=<
+<table border="0" cellborder="1" color="white" cellspacing="0" >
+<tr> <td> sb_nombre_hd: </td><td>D2°:ÓJóU</td></tr>
+<tr> <td> sb_arbol_virtual_count: </td><td>6830</td></tr>
+<tr> <td> sb_detalle_directory_count: </td><td>6830</td></tr>
+<tr> <td> sb_inodos_count: </td><td>34150</td></tr>
+<tr> <td> sb_bloques_count: </td><td>136600</td></tr>
+<tr> <td> sb_arbol_virtual_free: </td><td>6829</td></tr>
+<tr> <td> sb_detalle_directory_free: </td><td>6829</td></tr>
+<tr> <td> sb_inodos_free: </td><td>34149</td></tr>
+<tr> <td> sb_bloques_free: </td><td>136598</td></tr>
+<tr> <td> sb_date_creacion: </td<td>>20/12/2019 00:16:32</td></tr>
+<tr> <td> sb_date_ultimo_montaje: </td><td>20/12/2019 00:16:32</td></tr>
+<tr> <td> sb_montaje_count: </td><td>0</td></tr>
+<tr> <td> sb_ap_bitmap_arbol_directorio: </td><td>280</td></tr>
+<tr> <td> sb_ap_arbol_directory: </td><td>7110</td></tr>
+<tr> <td> sb_ap_bitmap_detalle_directory: </td><td>498870</td></tr>
+<tr> <td> sb_ap_detalle_directory: </td><td>505700</td></tr>
+<tr> <td> sb_ap_bitmap_table_inodo: </td><td>1926340</td></tr>
+<tr> <td> sb_ap_table_inodo: </td><td>1960490</td></tr>
+<tr> <td> sb_ap_bitmap_bloques: </td><td>3326490</td></tr>
+<tr> <td> sb_ap_bloques: </td><td>3463090</td></tr>
+<tr> <td> sb_ap_log: </td><td>6878090</td></tr>
+<tr> <td> size_struct_arbol_directorio: </td><td>72</td></tr>
+<tr> <td> size_struct_detalle_directorio: </td><td>208</td></tr>
+<tr> <td> size_struct_inodo: </td><td>40</td></tr>
+<tr> <td> size_struct_bloque: </td><td>25</td></tr>
+<tr> <td> sb_first_free_bit_arbol_directorio: </td><td>0</td></tr>
+<tr> <td> sb_first_free_bit_detalle_directorio: </td><td>0</td></tr>
+<tr> <td> sb_first_free_bit_tabla_inodo: </td><td>0</td></tr>
+<tr> <td> sb_first_free_bit_bloques: </td><td>0</td></tr>
+<tr> <td> sb_magic_num: </td><td>201113915</td></tr>
+</table>
+>]
+}

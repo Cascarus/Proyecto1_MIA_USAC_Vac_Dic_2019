@@ -59,12 +59,36 @@ void NT_Mkfile::execute(QString id, QString path, bool p, int size, QString cont
                     break;
                 }
             }
+
+        }
+
+        if(cont.length()<257){
+            Procedures::crearRegistroLog(id, ACTIONCREATE, LOG_ARCHIVO, path, cont, p);
         }
         else{
-            if(id=="")
-                Procedures::writeError("Falta el parametro &id");
-            if(path=="")
-                Procedures::writeError("Falta el parametro &path");
+            Procedures::crearRegistroLog(id,ACTIONCREATE, LOG_ARCHIVO, path, cont.mid(0,256), p);
+            cont =  cont.mid(256);
+
+            while(cont!=""){
+                if(cont.length()<257)
+                {
+                    Procedures::crearRegistroLog(id,ACTIONEDIT, LOG_ARCHIVO, path, cont, p);
+                    cont="";
+                }
+                else
+                {
+                    Procedures::crearRegistroLog(id,ACTIONEDIT, LOG_ARCHIVO, path, cont.mid(0,256), p);
+                    cont = cont.mid(256);
+                }
+            }
+
         }
     }
+    else{
+        if(id=="")
+            Procedures::writeError("Falta el parametro &id");
+        if(path=="")
+            Procedures::writeError("Falta el parametro &path");
+    }
 }
+

@@ -28,8 +28,13 @@ void NT_Mkdir::tourAST(NodeAST *node, QString command)
 void NT_Mkdir::execute(QString id, QString path, bool p, QString command)
 {
     Procedures::writeCommand(command);
+
+
+
     if(id!="" && path!=""){
         Procedures::writeLine("llego a execute NT_Mkdir");
+
+        Procedures::crearRegistroLog(id, ACTIONCREATE, LOG_CARPETA, path, "", p);
 
         USER userlogin = Procedures::getUserLogin();
         if(userlogin.name!="" && userlogin.id!=""){
@@ -68,5 +73,6 @@ void NT_Mkdir::execute(QString id, QString path, bool p, QString command)
         if(path=="")
             Procedures::writeError("Falta el parametro &path");
     }
+
 
 }

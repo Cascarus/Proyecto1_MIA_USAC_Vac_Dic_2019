@@ -338,14 +338,14 @@ digraph structs {
                 <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
                 <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
                 <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
-                <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>D</td><td>2</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td>ﾽ</td><td>K</td><td>ﾕ</td><td></td><td>V</td></tr>
+                <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>D</td><td>2</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
                 <tr><td> </td><td> </td><td>ﾮ</td><td></td><td> </td><td> </td><td>ﾮ</td><td></td><td> </td><td> </td><td>f</td><td>ﾅ</td><td> </td><td> </td><td>ﾘ</td><td></td><td></td><td> </td><td>	</td><td></td></tr>
-                <tr><td> </td><td> </td><td></td><td></td><td> </td><td> </td><td>e</td><td>ﾅ</td><td> </td><td> </td><td>ﾖ</td><td></td><td></td><td> </td><td></td><td>ﾢ</td><td>￻</td><td>]</td><td> </td><td> </td></tr>
-                <tr><td> </td><td> </td><td></td><td>ﾢ</td><td>￻</td><td>]</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td></td><td></td><td> </td><td> </td><td>ￆ</td><td></td></tr>
+                <tr><td> </td><td> </td><td></td><td></td><td> </td><td> </td><td>e</td><td>ﾅ</td><td> </td><td> </td><td>ﾖ</td><td></td><td></td><td> </td><td>ﾳ</td><td>ﾀ</td><td>�</td><td>]</td><td> </td><td> </td></tr>
+                <tr><td> </td><td> </td><td>ﾳ</td><td>ﾀ</td><td>�</td><td>]</td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td></td><td></td><td> </td><td> </td><td>ￆ</td><td></td></tr>
                 <tr><td> </td><td> </td><td>ﾶ</td><td>ﾜ</td><td></td><td> </td><td>d</td><td>ﾷ</td><td></td><td> </td><td>ￄ</td><td>d</td><td></td><td> </td><td>*</td><td>￪</td><td></td><td> </td><td></td><td>ￂ</td></tr>
                 <tr><td>2</td><td> </td><td>ﾲ</td><td>ￗ</td><td>4</td><td> </td><td>ﾊ</td><td>￳</td><td>h</td><td> </td><td>H</td><td> </td><td> </td><td> </td><td>￐</td><td> </td><td> </td><td> </td><td>(</td><td> </td></tr>
                 <tr><td> </td><td> </td><td></td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
-                <tr><td> </td><td> </td><td>;</td><td>￁</td><td>￼</td><td></td><td></td><td>V</td><td> </td><td> </td><td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  </tr>
+                <tr><td> </td><td> </td><td>;</td><td>￁</td><td>￼</td><td></td><td>ￋ</td><td>U</td><td> </td><td> </td><td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  <td> </td>  </tr>
             </table>
         >
     ];

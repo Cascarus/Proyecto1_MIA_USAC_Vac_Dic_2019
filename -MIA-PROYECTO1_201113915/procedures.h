@@ -110,8 +110,8 @@ public:
     static void setBlockData(QString path, BLOCK_DATA blockdata, int start, int n);
     static BLOCK_DATA getBlockData(QString path, int start, int n);
 
-    static BITACORA createBitacora(MOUNTEDPARTITION mountedPartition);
-    static void setBitacora(QString path, BITACORA bitacora, int start, int n);
+    static BITACORA createBitacora(int tipo_operacion, int tipo, QString nombre, QString contenido, time_t fecha, QString id, bool recursividad);
+    static void setBitacora(QString path, BITACORA bitacora, int start, int cantidad);
     static BITACORA getBitacora(QString path, int start, int n);
 
     static int existCarpetaAVD(QString path, int start, AVD root, QString name);
@@ -135,9 +135,9 @@ public:
     static int crearArchivoNuevo(QString id, QString path, bool p, int size, QString cont);
     static int mostrarContenido(QString id, QString archive);
     static void mostrarContenido(QString id, QStringList archives);
-    static void eliminar(QString path);
+    static void eliminar(QString id, QString path, bool recursividad);
     static void editarArchivo(QString path, QString cont);
-    static void renombrar(QString path, QString name);
+    static int renombrar(QString path, QString name, QString id);
     static int crearCarpetaNueva(QString id, QString path, bool p);
     static void copiar(QString path, QString dest);
     static void mover(QString path, QString dest);
@@ -162,6 +162,14 @@ public:
     static bool removerCarpetaAVD(QString path, SUPERBOOT sb, AVD root, int ap_root, int usr);
     static bool removeTextFile(QString path, SUPERBOOT sb, INODO archivo, int usr);
     static QString getStringUserGrp();
+    static bool renameFile(QString path, int start_DD, int pos_DD, DD detalle, QString name, QString newname);
+    static QList<POINTER> getCarpetasAVD(QString path, int start_avd, AVD avd);
+    static POINTER createPointer(QString name, int pointer);
+    static QString getDotTreeDirectory(QString path, DD detalle, int ap_dd, int start_dd);
+    static QString getDotInodo(QString path, INODO archivo, int start_inodos, int ap_inodo, int start_bloques);
+    static QString getDotTreeComplete(QString path, AVD root, int inicioAVD, int n, QString color, int start_dd, int start_inodes, int start_bloques);
+    static QString getDotDetalleTreeComplete(QString path, DD detalle, int ap_dd, int start_dd, int start_inodes, int start_bloques);
+    static void crearRegistroLog(QString id, int action, int tipo, QString path, QString contenido, bool recursividad);
 };
 
 

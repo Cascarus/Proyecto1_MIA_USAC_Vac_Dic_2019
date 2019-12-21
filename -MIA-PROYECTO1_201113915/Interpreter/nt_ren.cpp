@@ -31,6 +31,11 @@ void NT_Ren::execute(QString id, QString path, QString name, QString command)
     Procedures::writeCommand(command);
     if(id!="" && path!="" && name==""){
         Procedures::writeLine("llego a execute NT_Ren");
+        if(Procedures::renombrar(path,name,id)){
+
+        } else {
+
+        }
     }
     else{
         if(id=="")
