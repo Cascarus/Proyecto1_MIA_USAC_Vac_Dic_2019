@@ -1,0 +1,50 @@
+digraph structs {
+splines = ortho
+
+    INODO5 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo5</td></tr>
+<tr><td>18</td></tr>
+<tr><td>19</td></tr>
+<tr><td>20</td></tr>
+<tr><td>21</td></tr>
+<tr><td>6</td></tr>
+            </table>
+        >
+    ];
+
+    INODO5->BLOCK18;
+BLOCK18[shape="box" label="un agente racional debe e"]
+    INODO5->BLOCK19;
+BLOCK19[shape="box" label="mprender todas aquellas a"]
+    INODO5->BLOCK20;
+BLOCK20[shape="box" label="cciones que favorezcan ob"]
+    INODO5->BLOCK21;
+BLOCK21[shape="box" label="tener el máximo de su med"]
+INODO5->INODO6;
+
+    INODO6 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo6</td></tr>
+<tr><td>22</td></tr>
+<tr><td>26</td></tr>
+<tr><td>27</td></tr>
+<tr><td>28</td></tr>
+<tr><td> </td></tr>
+            </table>
+        >
+    ];
+
+    INODO6->BLOCK22;
+BLOCK22[shape="box" label="ida de rendimientoHola mu"]
+    INODO6->BLOCK26;
+BLOCK26[shape="box" label="ndo :D Que buena la vida "]
+    INODO6->BLOCK27;
+BLOCK27[shape="box" label="despues de ganar archivos"]
+    INODO6->BLOCK28;
+BLOCK28[shape="box" label=" :D"]
+}

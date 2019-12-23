@@ -1,10 +1,10 @@
 digraph structs {
 splines = ortho
-    AVD183 [
+    AVD37 [
         shape = none;
         label = <
             <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td colspan="8" bgcolor="white" >archivito</td></tr>
+                <tr><td colspan="8" bgcolor="white" >a4</td></tr>
                 <tr>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
@@ -13,30 +13,21 @@ splines = ortho
                     <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "cyan3"> &nbsp; </td>
-                    <td bgcolor = "greenyellow">161</td>
+                    <td bgcolor = "greenyellow">36</td>
                 </tr>
             </table>
         >
     ];
 
-AVD183->DD161;
-    DD161 [
+AVD37->DD36;
+    DD36 [
         shape = none;
         label = <
             <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td colspan="2" bgcolor="dodgerblue" >Detalle 161</td></tr>
-                <tr>
-                    <td bgcolor="lightskyblue1">a.txt</td>
-                    <td bgcolor="lightskyblue1">2</td>
-                </tr>
-                <tr>
-                    <td bgcolor="deepskyblue">b.txt</td>
-                    <td bgcolor="deepskyblue">5</td>
-                </tr>
-                <tr>
-                    <td bgcolor="lightskyblue1">c.txt</td>
-                    <td bgcolor="lightskyblue1">6</td>
-                </tr>
+                <tr><td colspan="2" bgcolor="dodgerblue" >Detalle 36</td></tr>
+<tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
+<tr><td bgcolor="deepskyblue"> </td><td bgcolor="deepskyblue"> </td></tr>
+<tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
 <tr><td bgcolor="deepskyblue"> </td><td bgcolor="deepskyblue"> </td></tr>
 <tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
 <tr><td colspan="2" bgcolor="greenyellow"> </td></tr>

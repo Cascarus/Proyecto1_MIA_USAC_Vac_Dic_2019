@@ -27,7 +27,7 @@ AVD0->AVD1;
                 <tr><td colspan="8" bgcolor="white" >home</td></tr>
                 <tr>
                     <td bgcolor = "lightskyblue1">2</td>
-                    <td bgcolor = "lightcyan"> &nbsp; </td>
+                    <td bgcolor = "lightskyblue1">183</td>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
@@ -5044,7 +5044,7 @@ AVD173->AVD180;
                 <tr>
                     <td bgcolor = "lightskyblue1">181</td>
                     <td bgcolor = "lightskyblue1">182</td>
-                    <td bgcolor = "lightskyblue1">183</td>
+                    <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
@@ -5127,155 +5127,6 @@ AVD182->DD160;
         >
     ];
 
-AVD180->AVD183;
-    AVD183 [
-        shape = none;
-        label = <
-            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td colspan="8" bgcolor="white" >archivito</td></tr>
-                <tr>
-                    <td bgcolor = "lightcyan"> &nbsp; </td>
-                    <td bgcolor = "lightcyan"> &nbsp; </td>
-                    <td bgcolor = "lightcyan"> &nbsp; </td>
-                    <td bgcolor = "lightcyan"> &nbsp; </td>
-                    <td bgcolor = "lightcyan"> &nbsp; </td>
-                    <td bgcolor = "lightcyan"> &nbsp; </td>
-                    <td bgcolor = "cyan3"> &nbsp; </td>
-                    <td bgcolor = "greenyellow">161</td>
-                </tr>
-            </table>
-        >
-    ];
-
-AVD183->DD161;
-    DD161 [
-        shape = none;
-        label = <
-            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td colspan="2" bgcolor="dodgerblue" >Detalle 161</td></tr>
-                <tr>
-                    <td bgcolor="lightskyblue1">a.txt</td>
-                    <td bgcolor="lightskyblue1">2</td>
-                </tr>
-                <tr>
-                    <td bgcolor="deepskyblue">b.txt</td>
-                    <td bgcolor="deepskyblue">5</td>
-                </tr>
-                <tr>
-                    <td bgcolor="lightskyblue1">c.txt</td>
-                    <td bgcolor="lightskyblue1">6</td>
-                </tr>
-<tr><td bgcolor="deepskyblue"> </td><td bgcolor="deepskyblue"> </td></tr>
-<tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
-<tr><td colspan="2" bgcolor="greenyellow"> </td></tr>
-            </table>
-        >
-    ];
-
-DD161->INODO2;
-
-    INODO2 [
-        shape = none;
-        label = <
-            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td bgcolor="dodgerblue" >Inodo2</td></tr>
-<tr><td>8</td></tr>
-<tr><td>9</td></tr>
-<tr><td>10</td></tr>
-<tr><td>11</td></tr>
-<tr><td>3</td></tr>
-            </table>
-        >
-    ];
-
-    INODO2->BLOCK8;
-BLOCK8[shape="box" label="Español -> Hola Mundo Ing"]
-    INODO2->BLOCK9;
-BLOCK9[shape="box" label="les -> Hello World Portug"]
-    INODO2->BLOCK10;
-BLOCK10[shape="box" label="ues -> Ola mundo Aleman -"]
-    INODO2->BLOCK11;
-BLOCK11[shape="box" label="> Hallo Welt Frances -> s"]
-INODO2->INODO3;
-
-    INODO3 [
-        shape = none;
-        label = <
-            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td bgcolor="dodgerblue" >Inodo3</td></tr>
-<tr><td>12</td></tr>
-<tr><td>13</td></tr>
-<tr><td>14</td></tr>
-<tr><td>15</td></tr>
-<tr><td>4</td></tr>
-            </table>
-        >
-    ];
-
-    INODO3->BLOCK12;
-BLOCK12[shape="box" label="alut monde Italiano -> Ci"]
-    INODO3->BLOCK13;
-BLOCK13[shape="box" label="ao mondo Español -> Hola "]
-    INODO3->BLOCK14;
-BLOCK14[shape="box" label="Mundo Ingles -> Hello Wor"]
-    INODO3->BLOCK15;
-BLOCK15[shape="box" label="ld Portugues -> Ola mundo"]
-INODO3->INODO4;
-
-    INODO4 [
-        shape = none;
-        label = <
-            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td bgcolor="dodgerblue" >Inodo4</td></tr>
-<tr><td>16</td></tr>
-<tr><td>17</td></tr>
-<tr><td>18</td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-            </table>
-        >
-    ];
-
-    INODO4->BLOCK16;
-BLOCK16[shape="box" label=" Aleman -> Hallo Welt Fra"]
-    INODO4->BLOCK17;
-BLOCK17[shape="box" label="nces -> salut monde Itali"]
-    INODO4->BLOCK18;
-BLOCK18[shape="box" label="ano "]
-DD161->INODO5;
-
-    INODO5 [
-        shape = none;
-        label = <
-            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td bgcolor="dodgerblue" >Inodo5</td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-            </table>
-        >
-    ];
-
-DD161->INODO6;
-
-    INODO6 [
-        shape = none;
-        label = <
-            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td bgcolor="dodgerblue" >Inodo6</td></tr>
-<tr><td>19</td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-            </table>
-        >
-    ];
-
-    INODO6->BLOCK19;
-BLOCK19[shape="box" label="/home/a&id->vda1 rch.txt"]
 AVD4->DD4;
     DD4 [
         shape = none;
@@ -5698,16 +5549,201 @@ AVD5->DD5;
         label = <
             <table border="0" cellborder="2" cellspacing="2" color="cyan4">
                 <tr><td colspan="2" bgcolor="dodgerblue" >Detalle 5</td></tr>
-<tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
-<tr><td bgcolor="deepskyblue"> </td><td bgcolor="deepskyblue"> </td></tr>
-<tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
-<tr><td bgcolor="deepskyblue"> </td><td bgcolor="deepskyblue"> </td></tr>
-<tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
+                <tr>
+                    <td bgcolor="lightskyblue1">archivo2.txt</td>
+                    <td bgcolor="lightskyblue1">2</td>
+                </tr>
+                <tr>
+                    <td bgcolor="deepskyblue">archivo3.txt</td>
+                    <td bgcolor="deepskyblue">5</td>
+                </tr>
+                <tr>
+                    <td bgcolor="lightskyblue1">archivo4.txt</td>
+                    <td bgcolor="lightskyblue1">7</td>
+                </tr>
+                <tr>
+                    <td bgcolor="deepskyblue">archivo5.txt</td>
+                    <td bgcolor="deepskyblue">8</td>
+                </tr>
+                <tr>
+                    <td bgcolor="lightskyblue1">archivo6.txt</td>
+                    <td bgcolor="lightskyblue1">9</td>
+                </tr>
 <tr><td colspan="2" bgcolor="greenyellow"> </td></tr>
             </table>
         >
     ];
 
+DD5->INODO2;
+
+    INODO2 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo2</td></tr>
+<tr><td>3</td></tr>
+<tr><td>4</td></tr>
+<tr><td>5</td></tr>
+<tr><td>6</td></tr>
+<tr><td>3</td></tr>
+            </table>
+        >
+    ];
+
+    INODO2->BLOCK3;
+BLOCK3[shape="box" label="Un agente es todo aquello"]
+    INODO2->BLOCK4;
+BLOCK4[shape="box" label=" que percibe su ambiente "]
+    INODO2->BLOCK5;
+BLOCK5[shape="box" label="mediante sensores ultrasó"]
+    INODO2->BLOCK6;
+BLOCK6[shape="box" label="nicos y que responde o ac"]
+INODO2->INODO3;
+
+    INODO3 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo3</td></tr>
+<tr><td>7</td></tr>
+<tr><td>8</td></tr>
+<tr><td>9</td></tr>
+<tr><td>10</td></tr>
+<tr><td>4</td></tr>
+            </table>
+        >
+    ];
+
+    INODO3->BLOCK7;
+BLOCK7[shape="box" label="tual en tal ambiente por "]
+    INODO3->BLOCK8;
+BLOCK8[shape="box" label="medio de efectos. Los age"]
+    INODO3->BLOCK9;
+BLOCK9[shape="box" label="ntes no requieren de la p"]
+    INODO3->BLOCK10;
+BLOCK10[shape="box" label="articipación de los human"]
+INODO3->INODO4;
+
+    INODO4 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo4</td></tr>
+<tr><td>11</td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+            </table>
+        >
+    ];
+
+    INODO4->BLOCK11;
+BLOCK11[shape="box" label="os para operar."]
+DD5->INODO5;
+
+    INODO5 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo5</td></tr>
+<tr><td>12</td></tr>
+<tr><td>13</td></tr>
+<tr><td>14</td></tr>
+<tr><td>15</td></tr>
+<tr><td>6</td></tr>
+            </table>
+        >
+    ];
+
+    INODO5->BLOCK12;
+BLOCK12[shape="box" label="un agente racional debe e"]
+    INODO5->BLOCK13;
+BLOCK13[shape="box" label="mprender todas aquellas a"]
+    INODO5->BLOCK14;
+BLOCK14[shape="box" label="cciones que favorezcan ob"]
+    INODO5->BLOCK15;
+BLOCK15[shape="box" label="tener el máximo de su med"]
+INODO5->INODO6;
+
+    INODO6 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo6</td></tr>
+<tr><td>16</td></tr>
+<tr><td>20</td></tr>
+<tr><td>21</td></tr>
+<tr><td>22</td></tr>
+<tr><td> </td></tr>
+            </table>
+        >
+    ];
+
+    INODO6->BLOCK16;
+BLOCK16[shape="box" label="ida de rendimientoHola mu"]
+    INODO6->BLOCK20;
+BLOCK20[shape="box" label="ndo :D Que buena la vida "]
+    INODO6->BLOCK21;
+BLOCK21[shape="box" label="despues de ganar archivos"]
+    INODO6->BLOCK22;
+BLOCK22[shape="box" label=" :D"]
+DD5->INODO7;
+
+    INODO7 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo7</td></tr>
+<tr><td>17</td></tr>
+<tr><td>23</td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+            </table>
+        >
+    ];
+
+    INODO7->BLOCK17;
+BLOCK17[shape="box" label="hola mundo 4 :Dagregue Co"]
+    INODO7->BLOCK23;
+BLOCK23[shape="box" label="ntenido a c.txt"]
+DD5->INODO8;
+
+    INODO8 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo8</td></tr>
+<tr><td>18</td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+            </table>
+        >
+    ];
+
+    INODO8->BLOCK18;
+BLOCK18[shape="box" label="hola mundo 5 :D"]
+DD5->INODO9;
+
+    INODO9 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo9</td></tr>
+<tr><td>19</td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+            </table>
+        >
+    ];
+
+    INODO9->BLOCK19;
+BLOCK19[shape="box" label="hola mundo 6 :D"]
 AVD3->AVD6;
     AVD6 [
         shape = none;
@@ -6352,6 +6388,63 @@ AVD2->DD2;
         >
     ];
 
+AVD1->AVD183;
+    AVD183 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td colspan="8" bgcolor="white" >user</td></tr>
+                <tr>
+                    <td bgcolor = "lightcyan"> &nbsp; </td>
+                    <td bgcolor = "lightcyan"> &nbsp; </td>
+                    <td bgcolor = "lightcyan"> &nbsp; </td>
+                    <td bgcolor = "lightcyan"> &nbsp; </td>
+                    <td bgcolor = "lightcyan"> &nbsp; </td>
+                    <td bgcolor = "lightcyan"> &nbsp; </td>
+                    <td bgcolor = "cyan3"> &nbsp; </td>
+                    <td bgcolor = "greenyellow">161</td>
+                </tr>
+            </table>
+        >
+    ];
+
+AVD183->DD161;
+    DD161 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td colspan="2" bgcolor="dodgerblue" >Detalle 161</td></tr>
+                <tr>
+                    <td bgcolor="lightskyblue1">archivo1.txt</td>
+                    <td bgcolor="lightskyblue1">1</td>
+                </tr>
+<tr><td bgcolor="deepskyblue"> </td><td bgcolor="deepskyblue"> </td></tr>
+<tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
+<tr><td bgcolor="deepskyblue"> </td><td bgcolor="deepskyblue"> </td></tr>
+<tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
+<tr><td colspan="2" bgcolor="greenyellow"> </td></tr>
+            </table>
+        >
+    ];
+
+DD161->INODO1;
+
+    INODO1 [
+        shape = none;
+        label = <
+            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
+                <tr><td bgcolor="dodgerblue" >Inodo1</td></tr>
+<tr><td>2</td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+            </table>
+        >
+    ];
+
+    INODO1->BLOCK2;
+BLOCK2[shape="box" label="hola mundo :D"]
 AVD1->DD1;
     DD1 [
         shape = none;
@@ -6396,43 +6489,17 @@ DD0->INODO0;
                 <tr><td bgcolor="dodgerblue" >Inodo0</td></tr>
 <tr><td>0</td></tr>
 <tr><td>1</td></tr>
-<tr><td>2</td></tr>
-<tr><td>3</td></tr>
-<tr><td>1</td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
+<tr><td> </td></tr>
             </table>
         >
     ];
 
     INODO0->BLOCK0;
 BLOCK0[shape="box" label="1,G,ROOT
-2,G,MYSQL
-3,G,OR"]
+1,U,ROOT,ROOT,2"]
     INODO0->BLOCK1;
-BLOCK1[shape="box" label="ACLE
-1,U,ROOT,ROOT,201113"]
-    INODO0->BLOCK2;
-BLOCK2[shape="box" label="915
-2,U,ORACLE,USER1,user"]
-    INODO0->BLOCK3;
-BLOCK3[shape="box" label="1
-3,U,MYSQL,USER2,user2
-4"]
-INODO0->INODO1;
-
-    INODO1 [
-        shape = none;
-        label = <
-            <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td bgcolor="dodgerblue" >Inodo1</td></tr>
-<tr><td>21</td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-<tr><td> </td></tr>
-            </table>
-        >
-    ];
-
-    INODO1->BLOCK21;
-BLOCK21[shape="box" label=",U,MYSQL,USER3,user3"]
+BLOCK1[shape="box" label="01113915
+"]
 }

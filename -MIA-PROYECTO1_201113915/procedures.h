@@ -69,12 +69,12 @@ public:
     static bool generateRepBm_Block(QString path, QString id);
     static bool generateRepBitacora(QString path, QString id);
     static bool generateRepDirectorio(QString path, QString id);
-    static bool generateRepTreeFile(QString path, QString id);
+    static bool generateRepTreeFile(QString path, QString id, QString ruta);
     static bool generateRepTreeDirectorio(QString path, QString id);
     static bool generateRepTreeComplete(QString path, QString id);
     static bool generateRepLs(QString path, QString id, QString ruta);
 
-    static QString getDotBitMap(QString titulo, QString bitmap);
+    static QString getTxtBitMap(QString titulo, QString bitmap);
 
     static QString getDotAVD(QString path, AVD root, int inicioAVD, int n, QString color);
     static QString getDotAVD2(QString path, AVD root, int inicioAVD, int n);
@@ -131,18 +131,18 @@ public:
     static bool removerGrupo(QString name, QString id);
     static bool crearUsuario(QString usr, QString pwd, QString grp, QString id);
     static bool removerUsuario(QString usr, QString id);
-    static void cambiarPermisos(QString path, QString ugo, bool r);
+    static int cambiarPermisos(QString id, QString path, QString ugo, bool r);
     static int crearArchivoNuevo(QString id, QString path, bool p, int size, QString cont);
     static int mostrarContenido(QString id, QString archive);
     static void mostrarContenido(QString id, QStringList archives);
     static void eliminar(QString id, QString path, bool recursividad);
-    static void editarArchivo(QString path, QString cont);
+    static int editarArchivo(QString id, QString path, QString cont);
     static int renombrar(QString path, QString name, QString id);
     static int crearCarpetaNueva(QString id, QString path, bool p);
     static void copiar(QString path, QString dest);
-    static void mover(QString path, QString dest);
+    static int mover(QString id, QString path, QString dest);
     static void buscar(QString path, QString name);
-    static void cambiarPropietario(QString path, QString usr, bool r);
+    static int cambiarPropietario(QString id, QString path, QString usr, bool r);
     static bool cambiarGrupo(QString usr, QString grp);
     static void perdida(QString id);
     static void recuperacion(QString id);
@@ -170,6 +170,13 @@ public:
     static QString getDotTreeComplete(QString path, AVD root, int inicioAVD, int n, QString color, int start_dd, int start_inodes, int start_bloques);
     static QString getDotDetalleTreeComplete(QString path, DD detalle, int ap_dd, int start_dd, int start_inodes, int start_bloques);
     static void crearRegistroLog(QString id, int action, int tipo, QString path, QString contenido, bool recursividad);
+    static QString getDotBitacora(QString path, int start_log, int count_log);
+    static bool eliminarCarpetaAVD(QString path, int avd_rm, AVD root, int ap_avd, int start_avd);
+    static bool agregarApAVD(QString path, int avd_rm, AVD root, int ap_avd, int start_avd, SUPERBOOT sb);
+    static QList<POINTER> getArchivosDD(QString path, int start_dd, DD detalle);
+    static QString getTextLS(AVD avd);
+    static QString getTextLS(INODO archivo);
+    static USER getUser(QString id);
 };
 
 

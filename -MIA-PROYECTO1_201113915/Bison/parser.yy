@@ -754,6 +754,10 @@ NT_Parametermkdisk      : RW_Size SYM_Arrow RE_Number{
                         | RW_Name SYM_Arrow RE_Name2{
                             $$ = new NodeAST(@3.first_line, @3.first_column,"NAME",$3);
                             $$->command = QString::fromLatin1($1) + " " + QString::fromLatin1($2) + " " + QString::fromLatin1($3);
+                        }
+                        | RW_Name SYM_Arrow RE_String{
+                            $$ = new NodeAST(@3.first_line, @3.first_column,"NAME",$3);
+                            $$->command = QString::fromLatin1($1) + " " + QString::fromLatin1($2) + " " + QString::fromLatin1($3);
                         };
 NT_Mkfile               : RW_Mkfile NT_Parametersmkfile{
                             $$ = new NodeAST(@1.first_line, @1.first_column,"NTMKFILE","NTMKFILE");

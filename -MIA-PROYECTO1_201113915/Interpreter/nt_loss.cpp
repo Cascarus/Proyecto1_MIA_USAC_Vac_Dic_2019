@@ -26,6 +26,7 @@ void NT_Loss::execute(QString id, QString command)
     Procedures::writeCommand(command);
     if(id!=""){
         Procedures::writeLine("llego a execute NT_Loss");
+        Procedures::perdida(id);
     }
     else{
         if(id=="")

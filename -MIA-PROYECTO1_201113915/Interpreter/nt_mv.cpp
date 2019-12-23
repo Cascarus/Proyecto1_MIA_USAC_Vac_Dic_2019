@@ -32,6 +32,33 @@ void NT_Mv::execute(QString id, QString path, QString destiny, QString command)
     Procedures::writeCommand(command);
     if(id!="" && path!="" && destiny!=""){
         Procedures::writeLine("llego a execute NT_Mv");
+        //TODO AGREGAR BITACORA
+        USER userlogin = Procedures::getUserLogin();
+        if(userlogin.name!="" && userlogin.id!=""){
+            if(userlogin.id == id.toUpper()){
+                switch (Procedures::mover(id, path, destiny)) {
+                case EXITO:
+                    Procedures::writeLine("Se creo carpeta con éxito.");
+                    break;
+                case FALLO:
+                    Procedures::writeError("No se logro crear la carpeta porque faltan carpetas padre");
+                    break;
+                case SIN_PERMISOS_LECTURA:
+                    Procedures::writeError("No se logro crear la carpeta porque no tienen permisos de lectura");
+                    break;
+                case SIN_PERMISOS_ESCRITURA:
+                    Procedures::writeError("No se logro crear la carpeta porque no tienen permisos de escritura.");
+                    break;
+                default:
+                    break;
+                }
+            }else{
+                Procedures::writeError("Partición a modificar no corresponde al usuario logeado.");
+            }
+
+        }else{
+            Procedures::writeError("No se a iniciado sesión.");
+        }
     }
     else{
         if(id=="")

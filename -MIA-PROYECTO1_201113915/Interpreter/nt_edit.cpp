@@ -32,6 +32,51 @@ void NT_Edit::execute(QString id, QString path, int size, QString cont, QString 
     Procedures::writeCommand(command);
     if(id!="" && path!=""){
         Procedures::writeLine("llego a execute NT_Edit");
+
+        USER userlogin = Procedures::getUserLogin();
+        if(userlogin.name!="" && userlogin.id!=""){
+            if(userlogin.id == id.toUpper()){
+                switch (Procedures::editarArchivo(id,path,cont)) {
+                case EXITO:
+                    Procedures::writeLine("Se edito "+ path +" con éxito.");
+                    break;
+                case FALLO:
+                    Procedures::writeError("No se logro editar el archivo porque faltan carpetas padre");
+                    break;
+                case SIN_PERMISOS_LECTURA:
+                    Procedures::writeError("No se logro editar el archivo porque no tienen permisos de lectura");
+                    break;
+                case SIN_PERMISOS_ESCRITURA:
+                    Procedures::writeError("No se logro editar el archivo porque no tienen permisos de escritura.");
+                    break;
+                default:
+                    break;
+                }
+            }
+
+        }
+
+        if(cont.length()<257){
+            Procedures::crearRegistroLog(id, ACTIONEDIT, LOG_ARCHIVO, path, cont, false);
+        }
+        else{
+            Procedures::crearRegistroLog(id,ACTIONEDIT, LOG_ARCHIVO, path, cont.mid(0,256), false);
+            cont =  cont.mid(256);
+
+            while(cont!=""){
+                if(cont.length()<257)
+                {
+                    Procedures::crearRegistroLog(id,ACTIONEDIT, LOG_ARCHIVO, path, cont, false);
+                    cont="";
+                }
+                else
+                {
+                    Procedures::crearRegistroLog(id,ACTIONEDIT, LOG_ARCHIVO, path, cont.mid(0,256), false);
+                    cont = cont.mid(256);
+                }
+            }
+
+        }
     }
     else{
         if(id=="")

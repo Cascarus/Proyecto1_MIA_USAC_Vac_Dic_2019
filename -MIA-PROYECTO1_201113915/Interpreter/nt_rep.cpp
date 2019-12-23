@@ -53,7 +53,7 @@ void NT_Rep::execute(QString path, QString name, QString id, QString ruta, QStri
         else if(name.toUpper()=="DIRECTORIO")
             Procedures::generateRepDirectorio(path,id);
         else if(name.toUpper()=="TREE_FILE")
-            Procedures::generateRepTreeFile(path,id);
+            Procedures::generateRepTreeFile(path,id,ruta);
         else if(name.toUpper()=="TREE_DIRECTORIO")
             Procedures::generateRepTreeDirectorio(path,id);
         else if(name.toUpper()=="TREE_COMPLETE")

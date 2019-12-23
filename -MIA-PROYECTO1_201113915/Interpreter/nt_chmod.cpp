@@ -32,6 +32,30 @@ void NT_Chmod::execute(QString id, QString path, QString ugo, bool r, QString co
     Procedures::writeCommand(command);
     if(id!="" && path!="" && ugo!=""){
         Procedures::writeLine("llego a execute NT_Chmod");
+
+        USER userlogin = Procedures::getUserLogin();
+        if(userlogin.name!="" && userlogin.id!=""){
+            if(userlogin.id == id.toUpper()){
+                switch (Procedures::cambiarPermisos(id, path, ugo, r)) {
+                case EXITO:
+                    Procedures::writeLine("Se cambio permisos "+ path +" con éxito.");
+                    break;
+                case FALLO:
+                    Procedures::writeError("No se logro cambiar permisos porque faltan carpetas padre");
+                    break;
+                case SIN_PERMISOS_LECTURA:
+                    Procedures::writeError("No se logro cambiar permisos porque no tienen permisos de lectura");
+                    break;
+                case SIN_PERMISOS_ESCRITURA:
+                    Procedures::writeError("No se logro cambiar permisos archivo porque no tienen permisos de escritura.");
+                    break;
+                default:
+                    break;
+                }
+            }
+
+        }
+
     }
     else{
         if(id=="")

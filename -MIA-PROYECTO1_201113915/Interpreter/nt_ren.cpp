@@ -29,13 +29,31 @@ void NT_Ren::tourAST(NodeAST *node, QString command)
 void NT_Ren::execute(QString id, QString path, QString name, QString command)
 {
     Procedures::writeCommand(command);
-    if(id!="" && path!="" && name==""){
-        Procedures::writeLine("llego a execute NT_Ren");
-        if(Procedures::renombrar(path,name,id)){
+    if(id!="" && path!="" && name!=""){
 
-        } else {
+        USER userlogin = Procedures::getUserLogin();
+        if(userlogin.name!="" && userlogin.id!=""){
+            if(userlogin.id == id.toUpper()){
+                switch (Procedures::renombrar(path,name,id)) {
+                case EXITO:
+                    Procedures::writeLine("Se renombro "+ path +" con éxito.");
+                    break;
+                case FALLO:
+                    Procedures::writeError("No se logro renombrar porque faltan carpetas padre");
+                    break;
+                case SIN_PERMISOS_LECTURA:
+                    Procedures::writeError("No se logro renombrar porque no tienen permisos de lectura");
+                    break;
+                case SIN_PERMISOS_ESCRITURA:
+                    Procedures::writeError("No se logro renombrar archivo porque no tienen permisos de escritura.");
+                    break;
+                default:
+                    break;
+                }
+            }
 
         }
+
     }
     else{
         if(id=="")

@@ -24,5 +24,8 @@ void NT_Recovery::tourAST(NodeAST *node, QString command)
 void NT_Recovery::execute(QString id, QString command)
 {
     Procedures::writeCommand(command);
+
+    Procedures::recuperacion(id);
+
     Procedures::writeLine("llego a execute NT_Recovery");
 }
