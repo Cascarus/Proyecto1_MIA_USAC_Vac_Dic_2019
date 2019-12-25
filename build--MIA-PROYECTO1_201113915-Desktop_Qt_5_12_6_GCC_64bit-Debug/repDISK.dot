@@ -6,34 +6,15 @@ arset [label=<
 <table border="0" cellborder="1" color="white" cellspacing="0" >
 <tr>
 <td bgcolor = "dodgerblue"> MBR <br/>136 bytes</td>
-<td bgcolor = "purple">PRI1<br/> (PRINCIPAL) <br/>8.33%<br/>10485760 bytes</td>
-<td bgcolor = "purple">PRI2<br/> (PRINCIPAL) <br/>8.14%<br/>10240000 bytes</td>
+<td bgcolor = "purple">PRI1<br/> (PRINCIPAL) <br/>25.00%<br/>31457280 bytes</td>
+<td bgcolor = "purple">PRI2<br/> (PRINCIPAL) <br/>24.41%<br/>30720000 bytes</td>
 <td>
 <table border="0" cellborder="1" color="white" cellspacing="0" >
-<tr><td colspan ="17"  bgcolor = "orangered">EXT<br/> (EXTENDIDA) <br/>41.67%<br/>52428800 bytes</td></tr>
-<tr>
-<td bgcolor = "forestgreen"> EBR <br/>32 bytes</td>
-<td bgcolor = "gold">LOG1<br/> (LÓGICA) <br/>4.17%<br/>5242880 bytes</td>
-<td bgcolor = "forestgreen"> EBR <br/>32 bytes</td>
-<td bgcolor = "gold">LOG2<br/> (LÓGICA) <br/>4.17%<br/>5242880 bytes</td>
-<td bgcolor = "forestgreen"> EBR <br/>32 bytes</td>
-<td bgcolor = "gold">LOG 3<br/> (LÓGICA) <br/>4.17%<br/>5242880 bytes</td>
-<td bgcolor = "forestgreen"> EBR <br/>32 bytes</td>
-<td bgcolor = "gold">LOG4<br/> (LÓGICA) <br/>4.17%<br/>5242880 bytes</td>
-<td bgcolor = "forestgreen"> EBR <br/>32 bytes</td>
-<td bgcolor = "gold">LOG5<br/> (LÓGICA) <br/>4.17%<br/>5242880 bytes</td>
-<td bgcolor = "forestgreen"> EBR <br/>32 bytes</td>
-<td bgcolor = "gold">LOG 6<br/> (LÓGICA) <br/>4.17%<br/>5242880 bytes</td>
-<td bgcolor = "forestgreen"> EBR <br/>32 bytes</td>
-<td bgcolor = "gold">LOG7<br/> (LÓGICA) <br/>4.17%<br/>5242880 bytes</td>
-<td bgcolor = "forestgreen"> EBR <br/>32 bytes</td>
-<td bgcolor = "gold">LOG8<br/> (LÓGICA) <br/>4.17%<br/>5242880 bytes</td>
-<td bgcolor = "gray"> ESPACIO LIBRE <br/>8.33% <br/>10485760 bytes</td>
-</tr>
+<tr><td colspan ="0"  bgcolor = "orangered">EXT<br/> (EXTENDIDA) <br/>41.67%<br/>52428800 bytes</td></tr>
 </table>
 </td>
 <td bgcolor = "purple">PRI3<br/> (PRINCIPAL) <br/>8.33%<br/>10485760 bytes</td>
-<td bgcolor = "gray"> ESPACIO LIBRE <br/>33.53% <br/>42188664 bytes</td>
+<td bgcolor = "gray"> ESPACIO LIBRE <br/>0.59% <br/>737144 bytes</td>
 </tr>
 </table>
 >]

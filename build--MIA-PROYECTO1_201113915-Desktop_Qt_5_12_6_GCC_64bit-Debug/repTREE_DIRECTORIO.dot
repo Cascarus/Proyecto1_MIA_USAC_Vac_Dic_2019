@@ -1,10 +1,10 @@
 digraph structs {
 splines = ortho
-    AVD37 [
+    AVD0 [
         shape = none;
         label = <
             <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td colspan="8" bgcolor="white" >a4</td></tr>
+                <tr><td colspan="8" bgcolor="white" >/</td></tr>
                 <tr>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
@@ -13,19 +13,22 @@ splines = ortho
                     <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "lightcyan"> &nbsp; </td>
                     <td bgcolor = "cyan3"> &nbsp; </td>
-                    <td bgcolor = "greenyellow">36</td>
+                    <td bgcolor = "greenyellow">0</td>
                 </tr>
             </table>
         >
     ];
 
-AVD37->DD36;
-    DD36 [
+AVD0->DD0;
+    DD0 [
         shape = none;
         label = <
             <table border="0" cellborder="2" cellspacing="2" color="cyan4">
-                <tr><td colspan="2" bgcolor="dodgerblue" >Detalle 36</td></tr>
-<tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
+                <tr><td colspan="2" bgcolor="dodgerblue" >Detalle 0</td></tr>
+                <tr>
+                    <td bgcolor="lightskyblue1">user.txt</td>
+                    <td bgcolor="lightskyblue1">0</td>
+                </tr>
 <tr><td bgcolor="deepskyblue"> </td><td bgcolor="deepskyblue"> </td></tr>
 <tr><td bgcolor="lightskyblue1"> </td><td bgcolor="lightskyblue1"> </td></tr>
 <tr><td bgcolor="deepskyblue"> </td><td bgcolor="deepskyblue"> </td></tr>
